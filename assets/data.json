@@ -1,0 +1,899 @@
+[
+    {
+        "agenceTransport": "M réso",
+        "imageFileName" : "assets/images/MReso.webp",
+        "reseaux": [
+            {
+                "type": "TRAM",
+                "mode": "TRAM",
+                "textColor": "FFFFFF",
+                "imageFileName": "assets/images/tram.webp",
+                "description": "Tram",
+                "lignes": [
+                    {
+                        "id": "SEM:A",
+                        "gtfsId": "SEM:A",
+                        "shortName": "A",
+                        "longName": "FONTAINE La Poya / PONT DE CLAIX L'Etoile",
+                        "color": "3376B8"
+                    },
+                    {
+                        "id": "SEM:B",
+                        "gtfsId": "SEM:B",
+                        "shortName": "B",
+                        "longName": "GRENOBLE Oxford / GIÈRES Plaine des Sports",
+                        "color": "479A45"
+                    },
+                    {
+                        "id": "SEM:C",
+                        "gtfsId": "SEM:C",
+                        "shortName": "C",
+                        "longName": "SAINT-MARTIN-D HÈRES Université Condillac / SEYSSINS Le Prisme",
+                        "color": "C20078"
+                    },
+                    {
+                        "id": "SEM:D",
+                        "gtfsId": "SEM:D",
+                        "shortName": "D",
+                        "longName": "SAINT-MARTIN-D’HÈRES Etienne Grappe / GRENOBLE Gares",
+                        "color": "DE9917"
+                    },
+                    {
+                        "id": "SEM:E",
+                        "gtfsId": "SEM:E",
+                        "shortName": "E",
+                        "longName": "FONTANIL-CORNILLON Palluel / GRENOBLE Louise Michel",
+                        "color": "533786"
+                    }
+                ]
+            },
+            {
+                "type": "NAVETTE",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "imageFileName": "assets/images/BusRelaisTram.webp",
+                "description": "Bus Relais",
+                "lignes": [
+                    {
+                        "id": "SEM:NAVA",
+                        "gtfsId": "SEM:NAVA",
+                        "shortName": "NAVA",
+                        "longName": "Bus Relais A",
+                        "color": "3376B8"
+                    },
+                    {
+                        "id": "SEM:NAVB",
+                        "gtfsId": "SEM:NAVB",
+                        "shortName": "NAVB",
+                        "longName": "Bus Relais B",
+                        "color": "479A45"
+                    },
+                    {
+                        "id": "SEM:NAVD",
+                        "gtfsId": "SEM:NAVD",
+                        "shortName": "NAVD",
+                        "longName": "Bus Relais D",
+                        "color": "DE9917"
+                    }
+                ]
+            },
+            {
+                "type": "CHRONO",
+                "mode": "BUS",
+                "textColor": "000000",
+                "imageFileName": "assets/images/chrono.webp",
+                "description": "Chrono",
+                "lignes": [
+                    {
+                        "id": "SEM:C1",
+                        "gtfsId": "SEM:1",
+                        "shortName": "C1",
+                        "longName": "GRENOBLE Cité Jean Macé / MEYLAN Maupertuis / MONTBONNOT-SAINT- MARTIN Pré de l'Eau",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C2",
+                        "gtfsId": "SEM:2",
+                        "shortName": "C2",
+                        "longName": "GRENOBLE Louise Michel / CLAIX Pont Rouge",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C3",
+                        "gtfsId": "SEM:3",
+                        "shortName": "C3",
+                        "longName": "GRENOBLE Victor Hugo / ÉCHIROLLES Centre du Graphisme",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C4",
+                        "gtfsId": "SEM:4",
+                        "shortName": "C4",
+                        "longName": "GRENOBLE Victor Hugo / EYBENS Le Verderet",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C5",
+                        "gtfsId": "SEM:5",
+                        "shortName": "C5",
+                        "longName": "GRENOBLE Palais de Justice - Gare / GIÈRES Universités - Biologie",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C6",
+                        "gtfsId": "SEM:6",
+                        "shortName": "C6",
+                        "longName": "GRENOBLE Oxford / EYBENS Maisons Neuves",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C7",
+                        "gtfsId": "SEM:7",
+                        "shortName": "C7",
+                        "longName": "ÉCHIROLLES Comboire / SAINT-MARTIN-D HÈRES Henri Wallon",
+                        "color": "F5D24D"
+                    },
+                    {
+                        "id": "SEM:C8",
+                        "gtfsId": "SEM:8",
+                        "shortName": "C8",
+                        "longName": "GRENOBLE Victor Hugo Belgrade / GIÈRES Université - Biologie / GIÈRES Université IUT STAPS",
+                        "color": "F5D24D"
+                    }
+                ]
+            },
+            {
+                "type": "CHRONO_PERI",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "imageFileName": "assets/images/chrono_peri.webp",
+                "description": "Chrono périurbaines",
+                "lignes": [
+                    {
+                        "id": "GSV:C9",
+                        "gtfsId": "GSV:C9",
+                        "shortName": "C9",
+                        "longName": "Bernin - Villard-Bonnot - Le Versoud - Montbonnot - Meylan",
+                        "color": "EF7C00"
+                    },
+                    {
+                        "id": "SEM:C10",
+                        "gtfsId": "SEM:10",
+                        "shortName": "C10",
+                        "longName": "BERNIN Cloyères / ÉCHIROLLES Marie Curie",
+                        "color": "EF7C00"
+                    },
+                    {
+                        "id": "SEM:C11",
+                        "gtfsId": "SEM:11",
+                        "shortName": "C11",
+                        "longName": "LUMBIN Longs Prés / VOIRON Gare Routière Sud",
+                        "color": "EF7C00"
+                    },
+                    {
+                        "id": "SEM:C12",
+                        "gtfsId": "SEM:12",
+                        "shortName": "C12",
+                        "longName": "GONCELIN Gare / VOIRON Champfeuillet",
+                        "color": "EF7C00"
+                    },
+                    {
+                        "id": "SEM:C13",
+                        "gtfsId": "SEM:13",
+                        "shortName": "C13",
+                        "longName": "VIZILLE Chantefeuille / GRENOBLE Gare Routière / VOREPPE Gare SNCF",
+                        "color": "EF7C00"
+                    },
+                    {
+                        "id": "SEM:C14",
+                        "gtfsId": "SEM:14",
+                        "shortName": "C14",
+                        "longName": "GRENOBLE Gares / SAINT-GEORGES-DE-COMMIERS Gare / LE GUA Les Saillants",
+                        "color": "EF7C00"
+                    }
+                ]
+            },
+            {
+                "type": "PROXIMO",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "imageFileName": "assets/images/proximo.webp",
+                "description": "Proximo",
+                "lignes": [
+                    {
+                        "id": "SEM:15",
+                        "gtfsId": "SEM:15",
+                        "shortName": "15",
+                        "longName": "GRENOBLE Verdun - Préfecture / DOMÈNE Chenevières / DOMÈNE Les Arnauds",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:16",
+                        "gtfsId": "SEM:16",
+                        "shortName": "16",
+                        "longName": "PONT-DE-CLAIX Gendarmerie / SAINT-MARTIN-D HÈRES Les Alloves",
+                        "color": "33A457"
+                    },
+                    {
+                        "id": "SEM:17",
+                        "gtfsId": "SEM:17",
+                        "shortName": "17",
+                        "longName": "GRENOBLE Verdun - Préfecture / MEYLAN Lycée du Grésivaudan / CORENC Montfleury",
+                        "color": "33A457"
+                    },
+                    {
+                        "id": "SEM:18",
+                        "gtfsId": "SEM:18",
+                        "shortName": "18",
+                        "longName": "MEYLAN Lycée du Grésivaudan / POISAT Cimetière Intercommunal",
+                        "color": "33A457"
+                    },
+                    {
+                        "id": "SEM:19",
+                        "gtfsId": "SEM:19",
+                        "shortName": "19",
+                        "longName": "SASSENAGE L’Ovalie / SEYSSINS Garlettes",
+                        "color": "33A457"
+                    },
+                    {
+                        "id": "SEM:20",
+                        "gtfsId": "SEM:20",
+                        "shortName": "20",
+                        "longName": "SEYSSINET-PARISET Hôtel de Ville / SASSENAGE Les Engenières / VEUREY-VOROIZE La Rive",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:21",
+                        "gtfsId": "SEM:21",
+                        "shortName": "21",
+                        "longName": "SEYSSINS Le Prisme / CLAIX Pont Rouge",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:22",
+                        "gtfsId": "SEM:22",
+                        "shortName": "22",
+                        "longName": "GRENOBLE Oxford / SAINT-ÉGRÈVE Gare",
+                        "color": "33A457"
+                    },
+                    {
+                        "id": "SEM:23",
+                        "gtfsId": "SEM:23",
+                        "shortName": "23",
+                        "longName": "VIZILLE Le Péage / SAINT-MARTIN-D'HÈRES Bibliothèques Universitaire",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:24",
+                        "gtfsId": "SEM:24",
+                        "shortName": "24",
+                        "longName": "GRENOBLE Verdun - Préfecture / GIÈRES Gare - Universités",
+                        "color": "33A457"
+                    },
+                    {
+                        "id": "SEM:25",
+                        "gtfsId": "SEM:25",
+                        "shortName": "25",
+                        "longName": "GRENOBLE Colonel Dumont / LE GUA Les Saillants",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "GSV:34",
+                        "gtfsId": "GSV:P34",
+                        "shortName": "34",
+                        "longName": "Goncelin - Froges - Brignoud - Villard Bonnot",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "GSV:35",
+                        "gtfsId": "GSV:P35",
+                        "shortName": "35",
+                        "longName": "Villard-Bonnot - Crolles - Le Touvet - Goncelin",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "GSV:36",
+                        "gtfsId": "GSV:P36",
+                        "shortName": "36",
+                        "longName": "Allevard - Goncelin - Pontcharra - Crolles",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:80",
+                        "gtfsId": "SEM:80",
+                        "shortName": "80",
+                        "longName": "GRENOBLE Verdun Préfecture / CROLLES Le Brocey",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:82",
+                        "gtfsId": "SEM:82",
+                        "shortName": "82",
+                        "longName": "LA TRONCHE Grand Sablon / SAINT-NAZAIRE-LES-EYMES Mairie",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:84",
+                        "gtfsId": "SEM:84",
+                        "shortName": "84",
+                        "longName": "GRENOBLE Gare Routière / LE TOUVET Grandes Terres",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:85",
+                        "gtfsId": "SEM:85",
+                        "shortName": "85",
+                        "longName": "LA TRONCHE Grand Sablon / PLATEAU-DES-PETITES ROCHES Col de Marcieu",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:86",
+                        "gtfsId": "SEM:86",
+                        "shortName": "86",
+                        "longName": "GRENOBLE Gare Routière / ALLEVARD Collège",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:88",
+                        "gtfsId": "SEM:88",
+                        "shortName": "88",
+                        "longName": "SAINT-MARTIN-D’HÈRES Bibliothèques Universitaires / SAINT-MARTIN-D’URIAGE Le Pinet d'Uriage",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "GSV:89",
+                        "gtfsId": "GSV:P89",
+                        "shortName": "89",
+                        "longName": "PROXIMO 89",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "SEM:90",
+                        "gtfsId": "SEM:90",
+                        "shortName": "90",
+                        "longName": "GIÈRES Gare Université / SAINT-ISMIER Collège Grésivaudan",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "GSV:91",
+                        "gtfsId": "GSV:P91",
+                        "shortName": "91",
+                        "longName": "PROXIMO 91",
+                        "color": "1E71B8"
+                    },
+                    {
+                        "id": "GSV:92",
+                        "gtfsId": "GSV:P92",
+                        "shortName": "92",
+                        "longName": "PROXIMO 92",
+                        "color": "1E71B8"
+                    }
+                ]
+            },
+            {
+                "type": "FLEXO",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "description": "Flexo",
+                "imageFileName": "assets/images/flexo.webp",
+                "lignes": [
+                    {
+                        "id": "SEM:40",
+                        "gtfsId": "SEM:40",
+                        "shortName": "40",
+                        "longName": "GRENOBLE Victor Hugo / GRENOBLE Le Rabot",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:41",
+                        "gtfsId": "SEM:41",
+                        "shortName": "41",
+                        "longName": "CORENC La Garenne / LA TRONCHE Grand Sablon",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:42",
+                        "gtfsId": "SEM:42",
+                        "shortName": "42",
+                        "longName": "MEYLAN La Détourbe / LA TRONCHE Grand Sablon",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:44",
+                        "gtfsId": "SEM:44",
+                        "shortName": "44",
+                        "longName": "LE GUA Les Saillants / LE GUA Prélenfrey Église / MIRIBEL-LANCHÂTRE Le Vernay / Col de l'Arzelier",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:45",
+                        "gtfsId": "SEM:45",
+                        "shortName": "45",
+                        "longName": "VIF La Valonne / VARCES-ALLIÈRES-ET-RISSET Rond-Point de l'Europe",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:46",
+                        "gtfsId": "SEM:46",
+                        "shortName": "46",
+                        "longName": "SAINT-PAUL-DE-VARCES Place / VARCES-ALLIÈRES-ET-RISSET République",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:47",
+                        "gtfsId": "SEM:47",
+                        "shortName": "47",
+                        "longName": "VARCES-ALLIÈRES-ET-RISSET Risset / CLAIX Pont Rouge / CLAIX Val d’Allières",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:48",
+                        "gtfsId": "SEM:48",
+                        "shortName": "48",
+                        "longName": "CLAIX Cossey / CLAIX Pont Rouge",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:49",
+                        "gtfsId": "SEM:49",
+                        "shortName": "49",
+                        "longName": "SEYSSINET-PARISET Cimetière / SEYSSINS Clinique du Dauphiné",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:50",
+                        "gtfsId": "SEM:50",
+                        "shortName": "50",
+                        "longName": "FONTAINE La Poya / SASSENAGE Les Côtes",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:51",
+                        "gtfsId": "SEM:51",
+                        "shortName": "51",
+                        "longName": "VEUREY-VOROIZE Châtelard / VEUREY-VOROIZE La Rive / SAINT-ÉGRÈVE Gare",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:54",
+                        "gtfsId": "SEM:54",
+                        "shortName": "54",
+                        "longName": "GRENOBLE Oxford / SASSENAGE Les Engenières / SAINT-ÉGRÈVE Pont de Vence",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:55",
+                        "gtfsId": "SEM:55",
+                        "shortName": "55",
+                        "longName": "SAINT-MARTIN-LE-VINOUX Col de Clémencières / SAINT-MARTIN-LE-VINOUX Hôtel de ville",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:56",
+                        "gtfsId": "SEM:56",
+                        "shortName": "56",
+                        "longName": "SAINT-MARTIN-LE-VINOUX Col de Clémencières / GRENOBLE Casamaures - Village",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:59",
+                        "gtfsId": "SEM:59",
+                        "shortName": "59",
+                        "longName": "SAINT MARTIN D'URIAGE Haut Vues -> GIERES gare",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:60",
+                        "gtfsId": "SEM:60",
+                        "shortName": "60",
+                        "longName": "PROVEYSIEUX Planfay Haut / SAINT-ÉGRÈVE Muret",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:61",
+                        "gtfsId": "SEM:61",
+                        "shortName": "61",
+                        "longName": "QUAIX-EN-CHARTREUSE La Cime de Mont-Quaix / SAINT-ÉGRÈVE Muret",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:64",
+                        "gtfsId": "SEM:64",
+                        "shortName": "64",
+                        "longName": "PONT-DE-CLAIX L'Étoile / PONT-DE-CLAIX ZI des Îles",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:65",
+                        "gtfsId": "SEM:65",
+                        "shortName": "65",
+                        "longName": "GRENOBLE Grand'place / VIZILLE Chantefeuille / VIZILLE Le Péage",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:66",
+                        "gtfsId": "SEM:66",
+                        "shortName": "66",
+                        "longName": "JARRIE Clos Jouvin / ÉCHIROLLES Gare",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:67",
+                        "gtfsId": "SEM:67",
+                        "shortName": "67",
+                        "longName": "HERBEYS Le Bourg / GRENOBLE Grand’place",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:68",
+                        "gtfsId": "SEM:68",
+                        "shortName": "68",
+                        "longName": "EYBENS La Grange du Château / ÉCHIROLLES La Rampe - Centre Ville",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:69",
+                        "gtfsId": "SEM:69",
+                        "shortName": "69",
+                        "longName": "SAINT-MARTIN-D HÈRES Bibliothèques Universitaires / VAULNAVEYS-LE-HAUT Belmont",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:70",
+                        "gtfsId": "SEM:70",
+                        "shortName": "70",
+                        "longName": "MONTCHABOUD Le Village / CHAMP-SUR-DRAC ZA La Plaine",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:71",
+                        "gtfsId": "SEM:71",
+                        "shortName": "71",
+                        "longName": "CHAMPAGNIER Place du Laca / JARRIE Gare",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "SEM:73",
+                        "gtfsId": "SEM:73",
+                        "shortName": "73",
+                        "longName": "Notre Dame de Commiers / Vif",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "GSV:74",
+                        "gtfsId": "GSV:F74",
+                        "shortName": "74",
+                        "longName": "FLEXO 74",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "GSV:75",
+                        "gtfsId": "GSV:F75",
+                        "shortName": "75",
+                        "longName": "Pontcharra - Barraux - La Flachère - St-Vincent de Mercuze - Le Touvet - Goncelin",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "GSV:76",
+                        "gtfsId": "GSV:F76",
+                        "shortName": "76",
+                        "longName": "Allevard - La Chapelle-du-Bard - Le Moutaret - Saint-Maximin - Pontcharra",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "GSV:78",
+                        "gtfsId": "GSV:F78",
+                        "shortName": "78",
+                        "longName": "Chapareillan - Barraux - Pontcharra",
+                        "color": "D572A8"
+                    },
+                    {
+                        "id": "GSV:79",
+                        "gtfsId": "GSV:F79",
+                        "shortName": "79",
+                        "longName": "ALLEVARD ECOLE PLEIADE",
+                        "color": "D572A8"
+                    }
+                ]
+            },
+            {
+                "type": "NATURE",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "description": "Destinations Nature",
+                "imageFileName": "assets/images/flexo.webp",
+                "lignes": [
+                    {
+                        "id": "SEM:N62",
+                        "gtfsId": "SEM:62",
+                        "shortName": "N62",
+                        "longName": "SARCENAS Pont du Croz / SARCENAS Col de Porte / GRENOBLE Notre-Dame - Musée",
+                        "color": "81BA26"
+                    },
+                    {
+                        "id": "NAT:N93",
+                        "gtfsId": "NAT:N93",
+                        "shortName": "N93",
+                        "longName": "CHAMROUSSE GRENOBLE",
+                        "color": "81BA26"
+                    },
+                    {
+                        "id": "NAT:N94",
+                        "gtfsId": "NAT:N94",
+                        "shortName": "N94",
+                        "longName": "Grenoble Gare Routière / Les 7 Laux Prapoutel Patte d'Oie",
+                        "color": "81BA26"
+                    },
+                    {
+                        "id": "NAT:N95",
+                        "gtfsId": "NAT:N95",
+                        "shortName": "N95",
+                        "longName": "Rafour Croizat / Les 7 Laux Prapoutel Parking Navettes",
+                        "color": "81BA26"
+                    },
+                    {
+                        "id": "NAT:N96",
+                        "gtfsId": "NAT:N96",
+                        "shortName": "N96",
+                        "longName": "Parking Collège Icare / Les 7 Laux Prapoutel Parking Navettes",
+                        "color": "81BA26"
+                    },
+                    {
+                        "id": "NAT:N97",
+                        "gtfsId": "NAT:N97",
+                        "shortName": "N97",
+                        "longName": "Pontcharra Le Coleo / La Chapelle-du-Bard Super Collet",
+                        "color": "81BA26"
+                    },
+                    {
+                        "id": "NAT:N98",
+                        "gtfsId": "NAT:N98",
+                        "shortName": "N98",
+                        "longName": "Allevard Collège / Le Haut-Bréda Le Pleynet",
+                        "color": "81BA26"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "agenceTransport": "Cars région",
+        "imageFileName" : "assets/images/RegionAuvergneRhoneAlpes.webp",
+        "reseaux": [
+            {
+                "type": "C38_STRUCT",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "imageFileName" : "assets/images/TransisereCar.webp",
+                "description": "Express",
+                "lignes": [
+                    {
+                        "id": "C38:X08",
+                        "gtfsId": "C38:X08",
+                        "shortName": "X08",
+                        "longName": "EXPRESS BEAUREPAIRE-GRENOBLE",
+                        "color": "9d1c6d"
+                    }
+                ]
+            },
+            {
+                "type": "C38_AUTRE",
+                "mode": "BUS",
+                "textColor": "FFFFFF",
+                "imageFileName" : "assets/images/TransisereCar.webp",
+                "description": "Régulières",
+                "lignes": [
+                    {
+                        "id": "C38:T40",
+                        "gtfsId": "C38:T40",
+                        "shortName": "T40",
+                        "longName": "ST PIERRE DE CHARTREUSE-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T41",
+                        "gtfsId": "C38:T41",
+                        "shortName": "T41",
+                        "longName": "VOIRON-CHAMBERY",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T42",
+                        "gtfsId": "C38:T42",
+                        "shortName": "T42",
+                        "longName": "PONT DE BEAUVOISIN-VOIRON",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T43",
+                        "gtfsId": "C38:T43",
+                        "shortName": "T43",
+                        "longName": "LES ABRETS-VOIRON",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T44",
+                        "gtfsId": "C38:T44",
+                        "shortName": "T44",
+                        "longName": "ST PIERRE D'ENTREMONT-ST LAURENT DU PONT",
+                        "color": "ffda00",
+                        "textColor": "000000",
+                        "mode": "BUS",
+                        "type": "C38_AUTRE"
+                    },
+                    {
+                        "id": "C38:T50",
+                        "gtfsId": "C38:T50",
+                        "shortName": "T50",
+                        "longName": "BEAUREPAIRE-MOIRANS-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T51",
+                        "gtfsId": "C38:T51",
+                        "shortName": "T51",
+                        "longName": "LA COTE ST ANDRE-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T55",
+                        "gtfsId": "C38:T55",
+                        "shortName": "T55",
+                        "longName": "LA COTE ST ANDRE-RIVES-VOIRON",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T56",
+                        "gtfsId": "C38:T56",
+                        "shortName": "T56",
+                        "longName": "LA COTE ST ANDRE-APPRIEU-VOIRON",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T60",
+                        "gtfsId": "C38:T60",
+                        "shortName": "T60",
+                        "longName": "PONT EN ROYANS-GRENOBLE",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T61",
+                        "gtfsId": "C38:T61",
+                        "shortName": "T61",
+                        "longName": "PONT EN ROYANS-ST ROMANS-ST MARCELLIN",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T62",
+                        "gtfsId": "C38:T62",
+                        "shortName": "T62",
+                        "longName": "ST MARCELLIN-MOIRANS-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T63",
+                        "gtfsId": "C38:T63",
+                        "shortName": "T63",
+                        "longName": "ROYBON-ST MARCELLIN",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T64",
+                        "gtfsId": "C38:T64",
+                        "shortName": "T64",
+                        "longName": "CORRENCON EN VERCORS-GRENOBLE via ENGINS",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T65",
+                        "gtfsId": "C38:T65",
+                        "shortName": "T65",
+                        "longName": "LANS EN VERCORS-ST NIZIER-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T66",
+                        "gtfsId": "C38:T66",
+                        "shortName": "T66",
+                        "longName": "VILLARD DE LANS-MEAUDRE-AUTRANS-LANS",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T70",
+                        "gtfsId": "C38:T70",
+                        "shortName": "T70",
+                        "longName": "(TAD T71) BRG D'OISANS-ALLEMONT-VAUJANY",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T71",
+                        "gtfsId": "C38:T71",
+                        "shortName": "T71",
+                        "longName": "BOURG D'OISANS-ALLEMONT-VAUJANY",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T73",
+                        "gtfsId": "C38:T73",
+                        "shortName": "T73",
+                        "longName": "LES DEUX ALPES-BOURG D'OISANS-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T75",
+                        "gtfsId": "C38:T75",
+                        "shortName": "T75",
+                        "longName": "BOURG D'OISANS-VIZILLE-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T76",
+                        "gtfsId": "C38:T76",
+                        "shortName": "T76",
+                        "longName": "L'ALPE D'HUEZ-BOURG D'OISANS-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T77",
+                        "gtfsId": "C38:T77",
+                        "shortName": "T77",
+                        "longName": "BOURG D'OISANS-LA BERARDE",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T83",
+                        "gtfsId": "C38:T83",
+                        "shortName": "T83",
+                        "longName": "CHAMBERY-CHAPAREILLAN-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T90",
+                        "gtfsId": "C38:T90",
+                        "shortName": "T90",
+                        "longName": "CORPS-LA MURE-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T91",
+                        "gtfsId": "C38:T91",
+                        "shortName": "T91",
+                        "longName": "GRENOBLE-GAP",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T92",
+                        "gtfsId": "C38:T92",
+                        "shortName": "T92",
+                        "longName": "LA MURE-LA MOTTE D'AVEILLANS-GRENOBLE",
+                        "color": "f29549"
+                    },
+                    {
+                        "id": "C38:T93",
+                        "gtfsId": "C38:T93",
+                        "shortName": "T93",
+                        "longName": "L'ALPE DU GRAND SERRE-LA MURE",
+                        "color": "65b363"
+                    },
+                    {
+                        "id": "C38:T94",
+                        "gtfsId": "C38:T94",
+                        "shortName": "T94",
+                        "longName": "MENS-LA MURE",
+                        "color": "ffda00",
+                        "textColor": "000000",
+                        "mode": "BUS",
+                        "type": "C38_AUTRE"
+                    },
+                    {
+                        "id": "C38:T95",
+                        "gtfsId": "C38:T95",
+                        "shortName": "T95",
+                        "longName": "MENS-MONESTIER DE CLERMONT-GRENOBLE",
+                        "color": "f29549"
+                    }
+                ]
+            }
+        ]
+    }
+]

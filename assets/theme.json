@@ -1,0 +1,21 @@
+{
+  "version": 8,
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "url": "openmaptiles"
+    }
+  },
+  "layers": [
+    {
+      "id": "landuse",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landuse",
+      "paint": {
+        "fill-color": "#88bb88",
+        "fill-opacity": 0.4
+      }
+    }
+  ]
+}
