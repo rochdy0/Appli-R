@@ -10,28 +10,28 @@ part 'database.g.dart'; // Généré automatiquement
 class AgenceTransport extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get nom => text().withLength(min: 1, max: 255)();
-
+  TextColumn get imageFileName => text().nullable()();
 }
 
 class Reseau extends Table {
   TextColumn get id => text()(); // Pas d'autoincrement
   IntColumn get agenceTransportId => integer().references(AgenceTransport, #id)();
   TextColumn get mode => text()();
-  TextColumn get textColor => text().nullable()();
-  TextColumn get imageFileName => text().nullable()();
-  TextColumn get description => text().nullable()();
+  TextColumn get textColor => text().nullable().named('text_color')();
+  TextColumn get imageFileName => text().nullable().named('image_file_name')();
+  TextColumn get description => text().nullable().named('description')();
 
   @override
   Set<Column> get primaryKey => {id};
 }
 
 class Ligne extends Table {
-  TextColumn get id => text()(); // Pas d'autoincrement
-  TextColumn get reseauId => text().references(Reseau, #id)();
-  TextColumn get gtfsId => text()();
-  TextColumn get shortName => text().nullable()();
-  TextColumn get longName => text().nullable()();
-  TextColumn get color => text().nullable()();
+  TextColumn get id => text().named('id')(); // Pas d'autoincrement
+  TextColumn get reseauId => text().references(Reseau, #id).named('reseau_id')();
+  TextColumn get gtfsId => text().named('gtfs_id')();
+  TextColumn get shortName => text().nullable().named('short_name')();
+  TextColumn get longName => text().nullable().named('long_name')();
+  TextColumn get color => text().nullable().named('color')();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -96,12 +96,12 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final dbPath = p.join(dbFolder.path, 'db.db');
-    File file = File(dbPath);
-    if (!await file.exists()) {
-      copyAssetToFile('db.db', FilePersistence.persistent);
-      file = File(dbPath);
-    }
+    final dbPath = p.join(dbFolder.path, 'cb.db');
+    //File file = File(dbPath);
+    //if (!await file.exists()) {
+      copyAssetToFile('cb.db', FilePersistence.persistent);
+      File file = File(dbPath);
+    //}
     return NativeDatabase(file);
   });
 }

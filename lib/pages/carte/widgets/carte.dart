@@ -5,6 +5,7 @@ import 'package:appli_r/pages/carte/widgets/carteWidgets/lignes_transport_polyli
 import 'package:appli_r/pages/carte/widgets/utils/load_map.dart';
 import 'package:appli_r/services/location_service.dart';
 import 'package:appli_r/viewmodels/line_geometry_view_model.dart';
+import 'package:appli_r/viewmodels/transport_mode_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,10 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
   }
 
   Future<void> _initLocation() async {
-    await Provider.of<LineGeometryViewModel>(context,listen: false,).loadPolyline("SEM:A");
+    await Provider.of<LineGeometryViewModel>(
+      context,
+      listen: false,
+    ).loadPolyline("SEM:A");
 
     final locationService = Provider.of<LocationService>(
       context,
@@ -95,7 +99,11 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
                 GpsCircleLayer(),
                 DirectionMarker(),
               ],
-              LignesTransportPolyline(),
+              switch (context.watch<TransportModeViewModel>().selectedMode) {
+                TransportMode.publicTransport => LignesTransportPolyline(),
+                TransportMode.bike => SizedBox.shrink(),
+                TransportMode.car => SizedBox.shrink(),
+              },
             ],
           );
         }

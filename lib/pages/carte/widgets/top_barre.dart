@@ -1,4 +1,4 @@
-import 'package:appli_r/pages/carte/widgets/topBarWidgets/transport_mode_button.dart';
+import 'package:appli_r/pages/carte/widgets/topBarWidgets/transport_configuration_button.dart';
 import 'package:appli_r/pages/carte/widgets/topBarWidgets/localisation_button.dart';
 import 'package:flutter/material.dart';
 
@@ -68,7 +68,7 @@ class _TopBarreState extends State<TopBarreCarte> {
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: Column(children: [LocalisationButton(), TransportModeButton()]),
+              child: Column(children: [LocalisationButton(), TransportConfigurationButton()]),
             ),
           ],
         ),

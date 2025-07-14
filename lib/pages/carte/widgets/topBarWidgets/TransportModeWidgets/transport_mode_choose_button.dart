@@ -24,7 +24,6 @@ class TransportModeChooseButton extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            //color: const Color.fromARGB(255, 224, 224, 224),
             border: currentTransportMode == transportMode
                 ? Border.all(
                     color: const Color.fromARGB(255, 67, 189, 189),

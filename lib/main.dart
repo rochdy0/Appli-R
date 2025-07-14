@@ -19,7 +19,8 @@ void main() async {
 
   final carModeVM = CarModeViewModel();
   final bikeModeVM = BikeModeViewModel();
-  final ptModeVM = PublicTransportViewModel();
+  final ptModeVM = PublicTransportViewModel(database);
+  ptModeVM.init();
 
   final transportVM = TransportModeViewModel(
     carMode: carModeVM,
