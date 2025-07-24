@@ -52,7 +52,7 @@ class LocationService with ChangeNotifier {
   Future<void> fetchCurrentPosition() async {
     await _checkPermission();
     if (_permissionStatus == LocationPermissionStatus.granted) {
-      _currentPosition = await Geolocator.getCurrentPosition();
+       _currentPosition = await Geolocator.getCurrentPosition();
       notifyListeners();
     }
   }
@@ -63,12 +63,12 @@ class LocationService with ChangeNotifier {
     if (_permissionStatus == LocationPermissionStatus.granted) {
       if (!_isListening) {
         _isListening = true;
-        _positionSubscription = Geolocator.getPositionStream().listen((
+         _positionSubscription = Geolocator.getPositionStream().listen((
           position,
         ) {
           _currentPosition = position;
           notifyListeners();
-        });
+        }); 
         _directionSubscription = FlutterCompass.events!.listen((direction) {
           _currentDirection = direction;
           notifyListeners();

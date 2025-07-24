@@ -1473,9 +1473,9 @@ class $ArretTable extends Arret with TableInfo<$ArretTable, ArretData> {
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _visibleMeta = const VerificationMeta(
     'visible',
@@ -1564,6 +1564,8 @@ class $ArretTable extends Arret with TableInfo<$ArretTable, ArretData> {
         _nameMeta,
         name.isAcceptableOrUnknown(data['name']!, _nameMeta),
       );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
     }
     if (data.containsKey('visible')) {
       context.handle(
@@ -1617,7 +1619,7 @@ class $ArretTable extends Arret with TableInfo<$ArretTable, ArretData> {
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
-      ),
+      )!,
       visible: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}visible'],
@@ -1644,7 +1646,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
   final int num;
   final String code;
   final String? city;
-  final String? name;
+  final String name;
   final bool visible;
   final double lat;
   final double lon;
@@ -1653,7 +1655,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
     required this.num,
     required this.code,
     this.city,
-    this.name,
+    required this.name,
     required this.visible,
     required this.lat,
     required this.lon,
@@ -1667,9 +1669,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
     if (!nullToAbsent || city != null) {
       map['city'] = Variable<String>(city);
     }
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
-    }
+    map['name'] = Variable<String>(name);
     map['visible'] = Variable<bool>(visible);
     map['lat'] = Variable<double>(lat);
     map['lon'] = Variable<double>(lon);
@@ -1682,7 +1682,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
       num: Value(num),
       code: Value(code),
       city: city == null && nullToAbsent ? const Value.absent() : Value(city),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      name: Value(name),
       visible: Value(visible),
       lat: Value(lat),
       lon: Value(lon),
@@ -1699,7 +1699,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
       num: serializer.fromJson<int>(json['num']),
       code: serializer.fromJson<String>(json['code']),
       city: serializer.fromJson<String?>(json['city']),
-      name: serializer.fromJson<String?>(json['name']),
+      name: serializer.fromJson<String>(json['name']),
       visible: serializer.fromJson<bool>(json['visible']),
       lat: serializer.fromJson<double>(json['lat']),
       lon: serializer.fromJson<double>(json['lon']),
@@ -1713,7 +1713,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
       'num': serializer.toJson<int>(num),
       'code': serializer.toJson<String>(code),
       'city': serializer.toJson<String?>(city),
-      'name': serializer.toJson<String?>(name),
+      'name': serializer.toJson<String>(name),
       'visible': serializer.toJson<bool>(visible),
       'lat': serializer.toJson<double>(lat),
       'lon': serializer.toJson<double>(lon),
@@ -1725,7 +1725,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
     int? num,
     String? code,
     Value<String?> city = const Value.absent(),
-    Value<String?> name = const Value.absent(),
+    String? name,
     bool? visible,
     double? lat,
     double? lon,
@@ -1734,7 +1734,7 @@ class ArretData extends DataClass implements Insertable<ArretData> {
     num: num ?? this.num,
     code: code ?? this.code,
     city: city.present ? city.value : this.city,
-    name: name.present ? name.value : this.name,
+    name: name ?? this.name,
     visible: visible ?? this.visible,
     lat: lat ?? this.lat,
     lon: lon ?? this.lon,
@@ -1788,7 +1788,7 @@ class ArretCompanion extends UpdateCompanion<ArretData> {
   final Value<int> num;
   final Value<String> code;
   final Value<String?> city;
-  final Value<String?> name;
+  final Value<String> name;
   final Value<bool> visible;
   final Value<double> lat;
   final Value<double> lon;
@@ -1809,7 +1809,7 @@ class ArretCompanion extends UpdateCompanion<ArretData> {
     required int num,
     required String code,
     this.city = const Value.absent(),
-    this.name = const Value.absent(),
+    required String name,
     required bool visible,
     required double lat,
     required double lon,
@@ -1817,6 +1817,7 @@ class ArretCompanion extends UpdateCompanion<ArretData> {
   }) : id = Value(id),
        num = Value(num),
        code = Value(code),
+       name = Value(name),
        visible = Value(visible),
        lat = Value(lat),
        lon = Value(lon);
@@ -1849,7 +1850,7 @@ class ArretCompanion extends UpdateCompanion<ArretData> {
     Value<int>? num,
     Value<String>? code,
     Value<String?>? city,
-    Value<String?>? name,
+    Value<String>? name,
     Value<bool>? visible,
     Value<double>? lat,
     Value<double>? lon,
@@ -4111,7 +4112,7 @@ typedef $$ArretTableCreateCompanionBuilder =
       required int num,
       required String code,
       Value<String?> city,
-      Value<String?> name,
+      required String name,
       required bool visible,
       required double lat,
       required double lon,
@@ -4123,7 +4124,7 @@ typedef $$ArretTableUpdateCompanionBuilder =
       Value<int> num,
       Value<String> code,
       Value<String?> city,
-      Value<String?> name,
+      Value<String> name,
       Value<bool> visible,
       Value<double> lat,
       Value<double> lon,
@@ -4369,7 +4370,7 @@ class $$ArretTableTableManager
                 Value<int> num = const Value.absent(),
                 Value<String> code = const Value.absent(),
                 Value<String?> city = const Value.absent(),
-                Value<String?> name = const Value.absent(),
+                Value<String> name = const Value.absent(),
                 Value<bool> visible = const Value.absent(),
                 Value<double> lat = const Value.absent(),
                 Value<double> lon = const Value.absent(),
@@ -4391,7 +4392,7 @@ class $$ArretTableTableManager
                 required int num,
                 required String code,
                 Value<String?> city = const Value.absent(),
-                Value<String?> name = const Value.absent(),
+                required String name,
                 required bool visible,
                 required double lat,
                 required double lon,

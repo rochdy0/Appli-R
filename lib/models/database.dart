@@ -52,7 +52,7 @@ class Arret extends Table {
   IntColumn get num => integer()();
   TextColumn get code => text()();
   TextColumn get city => text().nullable()();
-  TextColumn get name => text().nullable()();
+  TextColumn get name => text()();
   BoolColumn get visible => boolean()();
   RealColumn get lat => real()();
   RealColumn get lon => real()();

@@ -1,10 +1,12 @@
+import 'package:appli_r/pages/carte/widgets/carteWidgets/arrets_transport.dart';
 import 'package:appli_r/pages/carte/widgets/carteWidgets/direction_marker.dart';
 import 'package:appli_r/pages/carte/widgets/carteWidgets/gps_circle.dart';
 import 'package:appli_r/pages/carte/widgets/carteWidgets/gps_marker.dart';
+import 'package:appli_r/pages/carte/widgets/carteWidgets/gps_pulse_marker.dart';
 import 'package:appli_r/pages/carte/widgets/carteWidgets/lignes_transport_polyline.dart';
 import 'package:appli_r/pages/carte/widgets/utils/load_map.dart';
 import 'package:appli_r/services/location_service.dart';
-import 'package:appli_r/viewmodels/line_geometry_view_model.dart';
+//import 'package:appli_r/viewmodels/public_transport_view_model.dart';
 import 'package:appli_r/viewmodels/transport_mode_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -32,11 +34,6 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
   }
 
   Future<void> _initLocation() async {
-    await Provider.of<LineGeometryViewModel>(
-      context,
-      listen: false,
-    ).loadPolyline("SEM:A");
-
     final locationService = Provider.of<LocationService>(
       context,
       listen: false,
@@ -73,7 +70,7 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
             options: MapOptions(
               initialCenter: _initialPosition,
               initialZoom: _initialZoom,
-              maxZoom: 18,
+              maxZoom: 20,
               minZoom: 10,
               cameraConstraint: CameraConstraint.contain(
                 bounds: LatLngBounds(
@@ -90,23 +87,36 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
               ),
             ),
             children: [
-              VectorTileLayer(
+
+/*       TileLayer( // Bring your own tiles
+        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // For demonstration only
+        userAgentPackageName: 'com.example.app', // Add your app identifier
+        // And many more recommended properties!
+      ), */
+                             VectorTileLayer(
                 theme: ThemeReader().read(lightStyle),
                 tileProviders: TileProviders({'openmaptiles': tileProvider}),
               ),
               if (context.watch<LocationService>().isListening) ...[
+                //GpsCircleLayer(),
+                GpsPulseMarker(),
                 GpsMarkerLayer(),
-                GpsCircleLayer(),
+                
                 DirectionMarker(),
+                
               ],
-              switch (context.watch<TransportModeViewModel>().selectedMode) {
-                TransportMode.publicTransport => LignesTransportPolyline(),
-                TransportMode.bike => SizedBox.shrink(),
-                TransportMode.car => SizedBox.shrink(),
+
+              ...switch (context.watch<TransportModeViewModel>().selectedMode) {
+                TransportMode.publicTransport => [
+                  LignesTransportPolyline(),
+                  ArretsTransport(),
+                ],
+                TransportMode.bike => [],
+                TransportMode.car => [],
               },
             ],
           );
-        }
+         }
         if (snapshot.hasError) {
           debugPrint(snapshot.error.toString());
           debugPrintStack(stackTrace: snapshot.stackTrace);
