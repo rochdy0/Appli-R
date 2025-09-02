@@ -50,6 +50,7 @@ Future<RealTimeTransportResponse> getHoraires(
     }
     return horairesLigne;
   } else {
+    print('Erreur GET: ${response.statusCode} - ${response.body}');
     throw Exception('Erreur GET: ${response.statusCode} - ${response.body}');
   }
 }

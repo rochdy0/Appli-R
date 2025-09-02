@@ -1,0 +1,176 @@
+import 'dart:async';
+import 'dart:math' as math;
+
+import 'package:appli_r/data/datasources/local/publicTransport/public_transport_database.dart';
+import 'package:appli_r/data/datasources/network/public_transport_api.dart';
+import 'package:appli_r/data/mappers/public_transport_mappers.dart';
+import 'package:appli_r/data/models/public_transport_timetable_arret.dart';
+import 'package:appli_r/domain/entities/publicTransport/agence.dart';
+import 'package:appli_r/domain/entities/publicTransport/arret.dart';
+import 'package:appli_r/domain/entities/publicTransport/ligne.dart';
+import 'package:appli_r/domain/entities/publicTransport/ligne_shape.dart';
+import 'package:appli_r/domain/entities/publicTransport/nearest.dart';
+import 'package:appli_r/domain/entities/publicTransport/reseau.dart';
+import 'package:appli_r/domain/repositories/public_transport_repository.dart';
+
+class PublicTransportRepositoryImpl implements PublicTransportRepository {
+  final TestDatabase _db;
+  final PublicTransportApi _publicTransportApi;
+
+  PublicTransportRepositoryImpl(this._db, this._publicTransportApi);
+
+  @override
+  Future<Set<Agence>> loadAgences() async {
+    try {
+      final result = await _db.getAgences();
+      return result.map((agenceData) => agenceData.toDomain()).toSet();
+    } catch (e, stack) {
+      print("Erreur dans loadAgences: $e");
+      print(stack);
+      return {};
+    }
+  }
+
+  @override
+  Future<Set<Reseau>> loadReseauxByAgence(Agence agence) async {
+    try {
+      final results = await _db.getReseauxByAgence(agence.id);
+
+      return results.map((r) => ReseauMapper.fromData(r, agence.id)).toSet();
+    } catch (e, stack) {
+      print("Erreur dans loadReseauxByAgence: $e");
+      print(stack);
+      return {};
+    }
+  }
+
+  @override
+  Future<Set<Ligne>> loadLignesByReseau(Reseau reseau) async {
+    try {
+      final results = await _db.getLignesByReseau(reseau.id);
+
+      return results
+          .map((r) => LigneMapper.fromData(r, reseau.agenceId))
+          .toSet();
+    } catch (e, stack) {
+      print("Erreur dans loadLignesByReseau: $e");
+      print(stack);
+      return {};
+    }
+  }
+
+  @override
+  Future<Set<LigneShape>> loadLigneShapesByLignes(Set<Ligne> lignes) async {
+    try {
+      final Set<LigneShape> shapes = {};
+      for (final ligne in lignes) {
+        final results = await _db.getLigneShapeByLigne(ligne.name);
+        final shape = LigneShapeMapper.fromData(
+          ligne.name,
+          ligne.color,
+          results,
+        );
+        shapes.add(shape);
+      }
+      if (shapes.isEmpty)
+        throw Exception("fetchLigneShapesByLigne retourne une liste vide");
+      return shapes;
+    } catch (e, stack) {
+      print("Erreur dans loadLigneShapesByLigne: $e");
+      print(stack);
+      return {};
+    }
+  }
+
+  @override
+  Future<List<Nearest>> loadArretsAProximiteByReseaux(
+    double latitude,
+    double longitude,
+    Set<Reseau> reseaux,
+    int distance,
+  ) async {
+    if (reseaux.isEmpty) return [];
+    final reseauxIds = reseaux.map((r) => r.id).toSet();
+    const metersPerDegree = 111_000.0;
+    final delta = distance / metersPerDegree;
+    final cosLat = math.cos(latitude * math.pi / 180.0);
+
+    final minLat = latitude - delta;
+    final maxLat = latitude + delta;
+    final minLon = longitude - delta;
+    final maxLon = longitude + delta;
+
+    double dist2Meters(Stop s) {
+      final dLatM = (s.stopLat - latitude) * metersPerDegree;
+      final dLonM =
+          (s.stopLon - longitude) *
+          metersPerDegree *
+          cosLat; // compensation longitude
+      return dLatM * dLatM + dLonM * dLonM;
+    }
+
+    try {
+      final result = await _db.getArretsByCoord(minLat, maxLat, minLon, maxLon);
+      result.sort((a, b) => dist2Meters(a).compareTo(dist2Meters(b)));
+      final knownLignes = <String>{};
+      List<Nearest> arretsAProximite = [];
+      for (final stop in result) {
+        final res = await _db.getLignesByArretAndReseaux(
+          stop.stopName,
+          reseauxIds,
+        );
+        for (final route in res) {
+          if (knownLignes.add(route.routeId)) {
+            arretsAProximite.add(Nearest(stop.toDomain(), route.toDomain()));
+          }
+        }
+      }
+      return arretsAProximite;
+    } catch (e, stack) {
+      print("Erreur dans loadArretsAProximiteByReseaux: $e");
+      print(stack);
+      return [];
+    }
+  }
+
+  @override
+  Stream<RealTimeResponseModel> watchArretsTimeTable(Arret arret, Ligne ligne) {
+    final controller = StreamController<RealTimeResponseModel>.broadcast();
+    Timer? timer;
+    RealTimeResponseModel? last;
+
+    Future<void> tick() async {
+      try {
+        final data = await _publicTransportApi.fetchPublicTransportTimeTable(
+          arret.code,
+          ligne.agenceId,
+          ligne.name,
+        );
+        if (last == null || !(last! == data)) {
+          last = data;
+          if (!controller.isClosed) controller.add(data);
+        }
+      } catch (e, st) {
+        if (!controller.isClosed) controller.addError(e, st);
+      }
+    }
+
+    controller.onListen = () {
+      // tick immédiat
+      tick();
+      // puis périodique
+      timer = Timer.periodic(const Duration(seconds: 30), (_) => tick());
+    };
+
+    controller.onCancel = () {
+      // Pour un stream broadcast, on arrête tout quand il n’y a VRAIMENT plus d’abonnés
+      if (!controller.hasListener) {
+        timer?.cancel();
+        timer = null;
+        controller.close();
+      }
+    };
+
+    return controller.stream;
+  }
+}

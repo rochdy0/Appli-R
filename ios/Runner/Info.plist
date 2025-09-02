@@ -47,5 +47,9 @@
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Votre position est utilisée pour afficher les arrêts et transports à proximité.</string>
+	<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>voiapp</string>
+</array>
 </dict>
 </plist>
