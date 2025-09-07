@@ -26,9 +26,11 @@ class DirectionMarker extends StatelessWidget {
           height: 100,
           child: Transform.rotate(
             angle: (dir - 90) * (math.pi / 180),
-            child: CustomPaint(
+            child: RepaintBoundary(
+              child: CustomPaint(
               painter: _ConePainter(color: Colors.blue, angleDegrees: 60),
             ),
+          ),
           ),
         ),
       ],

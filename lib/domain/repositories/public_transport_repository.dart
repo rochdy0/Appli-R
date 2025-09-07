@@ -10,7 +10,9 @@ abstract class PublicTransportRepository {
   Future<Set<Agence>> loadAgences();
   Future<Set<Reseau>> loadReseauxByAgence(Agence agence);
   Future<Set<Ligne>> loadLignesByReseau(Reseau reseau);
+  Future<Set<Ligne>> loadLignesByReseaux(Set<String> reseauIds);
   Future<Set<LigneShape>> loadLigneShapesByLignes(Set<Ligne> lignes);
+  Future<Set<Arret>> loadArretsByReseau(Reseau reseau);
   Future<List<Nearest>> loadArretsAProximiteByReseaux(double latitude, double longitude, Set<Reseau> reseaux, int distance);
   Stream<RealTimeResponseModel> watchArretsTimeTable(Arret arret, Ligne ligne);
 }

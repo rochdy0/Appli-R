@@ -1,6 +1,9 @@
 import 'package:drift/drift.dart';
 
 class Agency extends Table {
+  @override
+  String get tableName => 'agency';
+
   TextColumn get agencyId => text()();
   TextColumn get agencyName => text()();
   TextColumn get agencyUrl => text()();
@@ -16,6 +19,9 @@ class Agency extends Table {
 } */
 
 class CalendarDates extends Table {
+  @override
+  String get tableName => 'calendar_dates';
+
   TextColumn get serviceId => text()();
   IntColumn get date => integer()();
   IntColumn get exceptionType => integer()();
@@ -24,6 +30,9 @@ class CalendarDates extends Table {
 /* class Calendar extends Table {} */
 
 class FareAttributes extends Table {
+  @override
+  String get tableName => 'fare_attributes';
+
   TextColumn get fareId => text()();
   IntColumn get price => integer()();
   TextColumn get currencyType => text()();
@@ -39,6 +48,9 @@ class FareAttributes extends Table {
 /* class Frequencies extends Table {} */
 
 class Routes extends Table {
+  @override
+  String get tableName => 'routes';
+
   TextColumn get agencyId => text()();
   TextColumn get routeId => text()();
   TextColumn get networkId => text()();
@@ -49,7 +61,18 @@ class Routes extends Table {
   TextColumn get routeTextColor => text()();
 }
 
+class RouteStop extends Table {
+  @override
+  String get tableName => 'route_stop';
+
+  TextColumn get stopId => text()();
+  TextColumn get routeId => text()();
+}
+
 class Shapes extends Table {
+  @override
+  String get tableName => 'shapes';
+
   TextColumn get shapeId => text()();
   RealColumn get shapePtLat => real()();
   RealColumn get shapePtLon => real()();
@@ -58,6 +81,9 @@ class Shapes extends Table {
 }
 
 class StopTimes extends Table {
+  @override
+  String get tableName => 'stop_times';
+
   IntColumn get tripId => integer()();
   TextColumn get stopId => text()();
   TextColumn get arrivalTime => text()();
@@ -68,6 +94,9 @@ class StopTimes extends Table {
 }
 
 class Stops extends Table {
+  @override
+  String get tableName => 'stops';
+
   TextColumn get stopId => text()();
   TextColumn get stopCode => text()();
   TextColumn get stopName => text()();
@@ -82,12 +111,17 @@ class Stops extends Table {
 /* class Transfers extends Table {} */
 
 class Trips extends Table {
-  TextColumn get routeId => text()/* .references(Routes, #routeId) */();
+  @override
+  String get tableName => 'trips';
+
+  TextColumn get routeId => text() /* .references(Routes, #routeId) */ ();
   IntColumn get tripId => integer()();
   TextColumn get tripHeadsign => text()();
-  TextColumn get serviceId => text()/* .references(CalendarDates, #serviceId) */();
+  TextColumn get serviceId =>
+      text() /* .references(CalendarDates, #serviceId) */ ();
   IntColumn get directionId => integer()();
-  TextColumn get shapeId => text().nullable()/* .references(Shapes, #shapeId) */();
+  TextColumn get shapeId =>
+      text().nullable() /* .references(Shapes, #shapeId) */ ();
   IntColumn get wheelchairAccessible => integer()();
   IntColumn get bikesAllowed => integer()();
 }

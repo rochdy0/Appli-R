@@ -5,9 +5,9 @@ import 'package:appli_r/data/models/public_transport_timetable_arret.dart';
 import 'package:appli_r/domain/entities/publicTransport/agence.dart';
 import 'package:appli_r/domain/entities/publicTransport/arret.dart';
 import 'package:appli_r/domain/entities/publicTransport/ligne.dart';
-import 'package:appli_r/domain/entities/publicTransport/ligne_shape.dart';
 import 'package:appli_r/domain/entities/publicTransport/nearest.dart';
 import 'package:appli_r/domain/entities/publicTransport/reseau.dart';
+import 'package:appli_r/domain/repositories/preferences_repository.dart';
 import 'package:appli_r/domain/repositories/public_transport_repository.dart';
 import 'package:appli_r/domain/usecases/timetable_nearest_stops_usecase.dart';
 import 'package:flutter/material.dart';
@@ -17,68 +17,44 @@ enum SelectionAction { add, remove }
 class PublicTransportViewModel extends ChangeNotifier {
   final PublicTransportRepository repository;
   final NearestArretsAllLinesRealtimeUseCase nearestRealtimeUseCase;
+  final PreferencesRepository preferencesRepository;
 
   final Set<Agence> _agences = {};
   final Set<Agence> _selectedAgence = {};
 
   UnmodifiableSetView<Agence> get agences => UnmodifiableSetView(_agences);
-  UnmodifiableSetView<Agence> get selectedAgence => UnmodifiableSetView(_selectedAgence);
+  UnmodifiableSetView<Agence> get selectedAgence =>
+      UnmodifiableSetView(_selectedAgence);
 
-  final Set<Reseau> _reseaux = {};
-  final Set<Reseau> _selectedReseaux = {};
+  Set<Reseau> _reseaux = {};
+  Set<Reseau> _selectedReseaux = {};
 
   UnmodifiableSetView<Reseau> get reseaux => UnmodifiableSetView(_reseaux);
-  UnmodifiableSetView<Reseau> get selectedReseaux => UnmodifiableSetView(_selectedReseaux);
+  UnmodifiableSetView<Reseau> get selectedReseaux =>
+      UnmodifiableSetView(_selectedReseaux);
 
-  final Set<Ligne> _lignes = {};
+  final Set<Arret> _arrets = {};
 
-  UnmodifiableSetView<Ligne> get lignes => UnmodifiableSetView(_lignes);
-
-  final Set<LigneShape> _lignesShape = {};
-
-  UnmodifiableSetView<LigneShape> get lignesShape => UnmodifiableSetView(_lignesShape);
-
+  UnmodifiableSetView<Arret> get arrets => UnmodifiableSetView(_arrets);
 
   StreamSubscription<NearRealtimeEvent>? _rtSub;
   List<Nearest> _nearest = const [];
-  final Map<String, RealTimeResponseModel> _rtByPair = {}; // key = a|agence|ligne
+  final Map<String, RealTimeResponseModel> _rtByPair =
+      {}; // key = a|agence|ligne
   List<Nearest> get nearest => _nearest;
-  RealTimeResponseModel? timetableFor(Arret a, Ligne l) => _rtByPair[_pairKey(a, l)];
+  RealTimeResponseModel? timetableFor(Arret a, Ligne l) =>
+      _rtByPair[_pairKey(a, l)];
   bool hasTimetable(Arret a, Ligne l) => _rtByPair.containsKey(_pairKey(a, l));
 
-
-
-  PublicTransportViewModel(this.repository, this.nearestRealtimeUseCase) {
+  PublicTransportViewModel(
+    this.repository,
+    this.nearestRealtimeUseCase,
+    this.preferencesRepository,
+  ) {
     repository.loadAgences().then((value) {
       _agences.addAll(value);
       notifyListeners();
     });
-  }
-
-  void _loadItems<T>({
-    required Set<T> source,
-    Set<T>? selected,
-    required Set<T> items,
-    required SelectionAction action,
-  }) {
-    if (action == SelectionAction.remove) {
-      source.removeAll(items);
-      selected?.removeAll(items);
-    } else {
-      source.addAll(items);
-    }
-  }
-
-  void _loadReseaux(Set<Reseau> reseaux, SelectionAction action) {
-    _loadItems(source: _reseaux ,selected: _selectedReseaux, items: reseaux, action: action);
-  }
-
-  void _loadLignes(Set<Ligne> lignes, SelectionAction action) {
-    _loadItems(source: _lignes, items: lignes, action: action);
-  }
-
-  void _loadLignesShapes(Set<LigneShape> lignesShapes, SelectionAction action) {
-    _loadItems(source: _lignesShape, items: lignesShapes, action: action);
   }
 
   void selectAgence(Agence agence) async {
@@ -91,14 +67,21 @@ class PublicTransportViewModel extends ChangeNotifier {
         ? SelectionAction.remove
         : SelectionAction.add;
 
-    final reseauxFromAgence = await repository.loadReseauxByAgence(agence);
+    _reseaux = await repository.loadReseauxByAgence(agence);
+    final prefReseaux = preferencesRepository.getSelectedReseaux();
+    prefReseaux.fold((sucess) {
+      _selectedReseaux = _reseaux.intersection(sucess);
+    }, (fail) {
+
+    });
+    
 
     if (action == SelectionAction.remove) {
       _selectedAgence.remove(agence);
     } else {
       _selectedAgence.add(agence);
     }
-    _loadReseaux(reseauxFromAgence, action);
+    
 
     notifyListeners();
   }
@@ -109,27 +92,26 @@ class PublicTransportViewModel extends ChangeNotifier {
       return;
     }
 
-    final action = _selectedReseaux.contains(reseau)
-        ? SelectionAction.remove
-        : SelectionAction.add;
-
-    final ligneFromReseau = await repository.loadLignesByReseau(reseau);
-
-    if (action == SelectionAction.remove) {
-      _selectedReseaux.remove(reseau);
-    } else {
-      _selectedReseaux.add(reseau);
-    }
-
-    final lignesShapesFromLignes = await repository.loadLigneShapesByLignes(ligneFromReseau);
-    _loadLignes(ligneFromReseau, action);
-
-    _loadLignesShapes(lignesShapesFromLignes, action);
+    final result = _selectedReseaux.contains(reseau)
+        ? await preferencesRepository.removeSelectedReseau(reseau.id)
+        : await preferencesRepository.addSelectedReseau(reseau.id);
+      result.fold((success) {
+        _selectedReseaux = success;
+      }, (error) {});
     _restartRealtimeIfActive();
+
+    /*     repository.loadLignesByReseau(reseau).then((lignes) {
+      _loadLignes(lignes, action);
+      repository
+          .loadLigneShapesByLignes(lignes)
+          .then((shapes) => _loadLignesShapes(shapes, action));
+    }); */
+
+    /* final arretsFromReseau = await repository.loadArretsByReseau(reseau); */
+    /* _loadArrets(arretsFromReseau, action);  */
+
     notifyListeners();
   }
-
-
 
   void startRealtime() {
     if (_rtSub != null) return; // déjà démarré
@@ -144,34 +126,30 @@ class PublicTransportViewModel extends ChangeNotifier {
           reseaux: _selectedReseaux,
           distanceMeters: _distanceMeters,
         )
-        .listen(
-      (evt) {
-        if (evt is NearestChanged) {
-          _nearest = evt.nearest;
+        .listen((evt) {
+          if (evt is NearestChanged) {
+            _nearest = evt.nearest;
 
-          notifyListeners();
-        } else if (evt is TimetableUpdated) {
-          _rtByPair[_pairKey(evt.arret, evt.ligne)] = evt.realtime;
-          notifyListeners();
-        }
-      },
-      onError: (e, st) {
-
-      },
-    );
+            notifyListeners();
+          } else if (evt is TimetableUpdated) {
+            _rtByPair[_pairKey(evt.arret, evt.ligne)] = evt.realtime;
+            notifyListeners();
+          }
+        }, onError: (e, st) {});
   }
+
   Future<void> stopRealtime() async {
     await _rtSub?.cancel();
     _rtSub = null;
   }
 
   void _restartRealtimeIfActive() {
-/*     final wasActive = _rtSub != null; */
-/*     if (!wasActive) return; */
+    /*     final wasActive = _rtSub != null; */
+    /*     if (!wasActive) return; */
     stopRealtime().then((_) => startRealtime());
   }
 
-    @override
+  @override
   void dispose() {
     _rtSub?.cancel();
     super.dispose();

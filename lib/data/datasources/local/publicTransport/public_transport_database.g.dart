@@ -1671,6 +1671,218 @@ class RoutesCompanion extends UpdateCompanion<Route> {
   }
 }
 
+class $RouteStopTable extends RouteStop
+    with TableInfo<$RouteStopTable, RouteStopData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RouteStopTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _stopIdMeta = const VerificationMeta('stopId');
+  @override
+  late final GeneratedColumn<String> stopId = GeneratedColumn<String>(
+    'stop_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _routeIdMeta = const VerificationMeta(
+    'routeId',
+  );
+  @override
+  late final GeneratedColumn<String> routeId = GeneratedColumn<String>(
+    'route_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [stopId, routeId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'route_stop';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RouteStopData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('stop_id')) {
+      context.handle(
+        _stopIdMeta,
+        stopId.isAcceptableOrUnknown(data['stop_id']!, _stopIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_stopIdMeta);
+    }
+    if (data.containsKey('route_id')) {
+      context.handle(
+        _routeIdMeta,
+        routeId.isAcceptableOrUnknown(data['route_id']!, _routeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_routeIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  RouteStopData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RouteStopData(
+      stopId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stop_id'],
+      )!,
+      routeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}route_id'],
+      )!,
+    );
+  }
+
+  @override
+  $RouteStopTable createAlias(String alias) {
+    return $RouteStopTable(attachedDatabase, alias);
+  }
+}
+
+class RouteStopData extends DataClass implements Insertable<RouteStopData> {
+  final String stopId;
+  final String routeId;
+  const RouteStopData({required this.stopId, required this.routeId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['stop_id'] = Variable<String>(stopId);
+    map['route_id'] = Variable<String>(routeId);
+    return map;
+  }
+
+  RouteStopCompanion toCompanion(bool nullToAbsent) {
+    return RouteStopCompanion(stopId: Value(stopId), routeId: Value(routeId));
+  }
+
+  factory RouteStopData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RouteStopData(
+      stopId: serializer.fromJson<String>(json['stopId']),
+      routeId: serializer.fromJson<String>(json['routeId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'stopId': serializer.toJson<String>(stopId),
+      'routeId': serializer.toJson<String>(routeId),
+    };
+  }
+
+  RouteStopData copyWith({String? stopId, String? routeId}) => RouteStopData(
+    stopId: stopId ?? this.stopId,
+    routeId: routeId ?? this.routeId,
+  );
+  RouteStopData copyWithCompanion(RouteStopCompanion data) {
+    return RouteStopData(
+      stopId: data.stopId.present ? data.stopId.value : this.stopId,
+      routeId: data.routeId.present ? data.routeId.value : this.routeId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RouteStopData(')
+          ..write('stopId: $stopId, ')
+          ..write('routeId: $routeId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(stopId, routeId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RouteStopData &&
+          other.stopId == this.stopId &&
+          other.routeId == this.routeId);
+}
+
+class RouteStopCompanion extends UpdateCompanion<RouteStopData> {
+  final Value<String> stopId;
+  final Value<String> routeId;
+  final Value<int> rowid;
+  const RouteStopCompanion({
+    this.stopId = const Value.absent(),
+    this.routeId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RouteStopCompanion.insert({
+    required String stopId,
+    required String routeId,
+    this.rowid = const Value.absent(),
+  }) : stopId = Value(stopId),
+       routeId = Value(routeId);
+  static Insertable<RouteStopData> custom({
+    Expression<String>? stopId,
+    Expression<String>? routeId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (stopId != null) 'stop_id': stopId,
+      if (routeId != null) 'route_id': routeId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RouteStopCompanion copyWith({
+    Value<String>? stopId,
+    Value<String>? routeId,
+    Value<int>? rowid,
+  }) {
+    return RouteStopCompanion(
+      stopId: stopId ?? this.stopId,
+      routeId: routeId ?? this.routeId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (stopId.present) {
+      map['stop_id'] = Variable<String>(stopId.value);
+    }
+    if (routeId.present) {
+      map['route_id'] = Variable<String>(routeId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RouteStopCompanion(')
+          ..write('stopId: $stopId, ')
+          ..write('routeId: $routeId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ShapesTable extends Shapes with TableInfo<$ShapesTable, Shape> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3682,6 +3894,7 @@ abstract class _$TestDatabase extends GeneratedDatabase {
   late final $CalendarDatesTable calendarDates = $CalendarDatesTable(this);
   late final $FareAttributesTable fareAttributes = $FareAttributesTable(this);
   late final $RoutesTable routes = $RoutesTable(this);
+  late final $RouteStopTable routeStop = $RouteStopTable(this);
   late final $ShapesTable shapes = $ShapesTable(this);
   late final $StopTimesTable stopTimes = $StopTimesTable(this);
   late final $StopsTable stops = $StopsTable(this);
@@ -3695,6 +3908,7 @@ abstract class _$TestDatabase extends GeneratedDatabase {
     calendarDates,
     fareAttributes,
     routes,
+    routeStop,
     shapes,
     stopTimes,
     stops,
@@ -4574,6 +4788,149 @@ typedef $$RoutesTableProcessedTableManager =
       $$RoutesTableUpdateCompanionBuilder,
       (Route, BaseReferences<_$TestDatabase, $RoutesTable, Route>),
       Route,
+      PrefetchHooks Function()
+    >;
+typedef $$RouteStopTableCreateCompanionBuilder =
+    RouteStopCompanion Function({
+      required String stopId,
+      required String routeId,
+      Value<int> rowid,
+    });
+typedef $$RouteStopTableUpdateCompanionBuilder =
+    RouteStopCompanion Function({
+      Value<String> stopId,
+      Value<String> routeId,
+      Value<int> rowid,
+    });
+
+class $$RouteStopTableFilterComposer
+    extends Composer<_$TestDatabase, $RouteStopTable> {
+  $$RouteStopTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get stopId => $composableBuilder(
+    column: $table.stopId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get routeId => $composableBuilder(
+    column: $table.routeId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RouteStopTableOrderingComposer
+    extends Composer<_$TestDatabase, $RouteStopTable> {
+  $$RouteStopTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get stopId => $composableBuilder(
+    column: $table.stopId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get routeId => $composableBuilder(
+    column: $table.routeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RouteStopTableAnnotationComposer
+    extends Composer<_$TestDatabase, $RouteStopTable> {
+  $$RouteStopTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get stopId =>
+      $composableBuilder(column: $table.stopId, builder: (column) => column);
+
+  GeneratedColumn<String> get routeId =>
+      $composableBuilder(column: $table.routeId, builder: (column) => column);
+}
+
+class $$RouteStopTableTableManager
+    extends
+        RootTableManager<
+          _$TestDatabase,
+          $RouteStopTable,
+          RouteStopData,
+          $$RouteStopTableFilterComposer,
+          $$RouteStopTableOrderingComposer,
+          $$RouteStopTableAnnotationComposer,
+          $$RouteStopTableCreateCompanionBuilder,
+          $$RouteStopTableUpdateCompanionBuilder,
+          (
+            RouteStopData,
+            BaseReferences<_$TestDatabase, $RouteStopTable, RouteStopData>,
+          ),
+          RouteStopData,
+          PrefetchHooks Function()
+        > {
+  $$RouteStopTableTableManager(_$TestDatabase db, $RouteStopTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RouteStopTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RouteStopTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RouteStopTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> stopId = const Value.absent(),
+                Value<String> routeId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RouteStopCompanion(
+                stopId: stopId,
+                routeId: routeId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String stopId,
+                required String routeId,
+                Value<int> rowid = const Value.absent(),
+              }) => RouteStopCompanion.insert(
+                stopId: stopId,
+                routeId: routeId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RouteStopTableProcessedTableManager =
+    ProcessedTableManager<
+      _$TestDatabase,
+      $RouteStopTable,
+      RouteStopData,
+      $$RouteStopTableFilterComposer,
+      $$RouteStopTableOrderingComposer,
+      $$RouteStopTableAnnotationComposer,
+      $$RouteStopTableCreateCompanionBuilder,
+      $$RouteStopTableUpdateCompanionBuilder,
+      (
+        RouteStopData,
+        BaseReferences<_$TestDatabase, $RouteStopTable, RouteStopData>,
+      ),
+      RouteStopData,
       PrefetchHooks Function()
     >;
 typedef $$ShapesTableCreateCompanionBuilder =
@@ -5565,6 +5922,8 @@ class $TestDatabaseManager {
       $$FareAttributesTableTableManager(_db, _db.fareAttributes);
   $$RoutesTableTableManager get routes =>
       $$RoutesTableTableManager(_db, _db.routes);
+  $$RouteStopTableTableManager get routeStop =>
+      $$RouteStopTableTableManager(_db, _db.routeStop);
   $$ShapesTableTableManager get shapes =>
       $$ShapesTableTableManager(_db, _db.shapes);
   $$StopTimesTableTableManager get stopTimes =>

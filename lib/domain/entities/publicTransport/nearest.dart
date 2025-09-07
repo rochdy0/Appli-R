@@ -6,4 +6,9 @@ class Nearest {
   Ligne ligne;
 
   Nearest(this.arret, this.ligne);
+
+  @override
+  String toString() {
+    return "${arret.toString()} --- ${ligne.toString()}";
+  }
 }

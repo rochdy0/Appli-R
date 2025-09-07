@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class MesTitresPage extends StatelessWidget {
-  const MesTitresPage({super.key});
+class ParametrePage extends StatelessWidget {
+  const ParametrePage({super.key});
 
   @override
   Widget build(BuildContext context) {

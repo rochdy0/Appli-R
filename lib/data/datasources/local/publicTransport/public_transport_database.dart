@@ -14,6 +14,7 @@ part 'public_transport_database.g.dart'; // Généré automatiquement
     CalendarDates,
     FareAttributes,
     Routes,
+    RouteStop,
     Shapes,
     StopTimes,
     Stops,
@@ -41,6 +42,9 @@ class TestDatabase extends _$TestDatabase {
 
   Future<List<Route>> getLignesByReseau(String reseauId) =>
       (select(routes)..where((r) => r.networkId.equals(reseauId))).get();
+
+  Future<List<Route>> getLignesByReseaux(Set<String> reseauIds) =>
+      (select(routes)..where((r) => r.networkId.isIn(reseauIds))).get();
 
   Future<List<Shape>> getLigneShapeByLigne(String ligneId) async {
     final row =
@@ -82,6 +86,19 @@ class TestDatabase extends _$TestDatabase {
     return q.map((row) => row.readTable(stops)).get();
   }
 
+  Future<List<Stop>> getArretsByReseau(String reseauId) {
+    final base = select(stops, distinct: true)
+      ..where((t) => routes.networkId.equals(reseauId)); // <- fonction attendue
+
+    final q = base.join([
+      innerJoin(stopTimes, stopTimes.stopId.equalsExp(stops.stopId)),
+      innerJoin(trips, trips.tripId.equalsExp(stopTimes.tripId)),
+      innerJoin(routes, routes.routeId.equalsExp(trips.routeId)),
+    ]);
+
+    return q.map((row) => row.readTable(stops)).get();
+  }
+
   Future<List<Stop>> getArretsByCoord(
     double minLat,
     double maxLat,
@@ -96,15 +113,15 @@ class TestDatabase extends _$TestDatabase {
           ))
           .get();
 
-  Future<Set<Route>> getLignesByArretAndReseaux(String stopName, Set<String> reseauxIds) async {
+  Future<Set<Route>> getLignesByArretAndReseaux(
+    String stopName,
+    Set<String> reseauxIds,
+  ) async {
     // routes <- trips <- stop_times (filtre sur l’arrêt)
-    final q = (select(routes, distinct: true))
-    .join([
-      innerJoin(trips, trips.routeId.equalsExp(routes.routeId)),
-      innerJoin(stopTimes, stopTimes.tripId.equalsExp(trips.tripId)),
-      innerJoin(stops, stops.stopId.equalsExp(stopTimes.stopId)),
+    final q = (select(routes, distinct: true)).join([
+      innerJoin(routeStop, routeStop.routeId.equalsExp(routes.routeId)),
+      innerJoin(stops, stops.stopId.equalsExp(routeStop.stopId)),
     ]);
-
     q.where(stops.stopName.equals(stopName));
     q.where(routes.networkId.isIn(reseauxIds));
 
@@ -116,10 +133,10 @@ class TestDatabase extends _$TestDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final dbPath = p.join(dbFolder.path, 'test.sqlite');
+    final dbPath = p.join(dbFolder.path, 'test2.sqlite');
     File file = File(dbPath);
     if (!await file.exists()) {
-      copyAssetToFile('test.sqlite', FilePersistence.persistent);
+      copyAssetToFile('test2.sqlite', FilePersistence.persistent);
       file = File(dbPath);
     }
     return NativeDatabase(file);

@@ -36,7 +36,7 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
     try {
       final results = await _db.getReseauxByAgence(agence.id);
 
-      return results.map((r) => ReseauMapper.fromData(r, agence.id)).toSet();
+      return results.map((r) => ReseauMapper.fromData(r)).toSet();
     } catch (e, stack) {
       print("Erreur dans loadReseauxByAgence: $e");
       print(stack);
@@ -50,8 +50,22 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
       final results = await _db.getLignesByReseau(reseau.id);
 
       return results
-          .map((r) => LigneMapper.fromData(r, reseau.agenceId))
+          .map((r) => r.toDomain())
           .toSet();
+    } catch (e, stack) {
+      print("Erreur dans loadLignesByReseau: $e");
+      print(stack);
+      return {};
+    }
+  }
+
+    @override
+  Future<Set<Ligne>> loadLignesByReseaux(Set<String> reseauIds) async {
+    try {
+      final results = await _db.getLignesByReseaux(reseauIds);
+
+      return Set.unmodifiable(results
+          .map((r) => r.toDomain()));
     } catch (e, stack) {
       print("Erreur dans loadLignesByReseau: $e");
       print(stack);
@@ -77,6 +91,21 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
       return shapes;
     } catch (e, stack) {
       print("Erreur dans loadLigneShapesByLigne: $e");
+      print(stack);
+      return {};
+    }
+  }
+
+    @override
+  Future<Set<Arret>> loadArretsByReseau(Reseau reseau) async {
+    try {
+      final results = await _db.getArretsByReseau(reseau.id);
+
+      return results
+          .map((r) => r.toDomain())
+          .toSet();
+    } catch (e, stack) {
+      print("Erreur dans loadArretsByReseau: $e");
       print(stack);
       return {};
     }

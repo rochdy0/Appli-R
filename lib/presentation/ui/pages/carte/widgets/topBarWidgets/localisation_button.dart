@@ -38,7 +38,7 @@ class _LocalisationButtonState extends State<LocalisationButton>
         shape: const CircleBorder(),
       ),
       onPressed: () {
-        if (locationViewModel.perm! == LocationPermissionStatus.deniedForever) {
+        /* if (locationViewModel.perm! == LocationPermissionStatus.deniedForever) {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -53,8 +53,8 @@ class _LocalisationButtonState extends State<LocalisationButton>
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    locationViewModel.start();
+/*                     Navigator.of(context).pop();
+                    locationViewModel.start(); */
                   },
                   child: Text('Fermer'),
                 ),
@@ -66,7 +66,7 @@ class _LocalisationButtonState extends State<LocalisationButton>
           final pos = locationViewModel.location!;
           final position = LatLng(pos.latitude, pos.longitude);
           animateMove(position, 16, _mapController, this);
-        }
+        } */
       },
       child: Icon(Icons.my_location),
     );

@@ -7,6 +7,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationRepositoryImpl implements LocationRepository {
+  Location? _lastLoc;
   @override
   Future<LocationPermissionStatus> ensurePermission() async {
     final enabled = await Geolocator.isLocationServiceEnabled();
@@ -33,8 +34,10 @@ class LocationRepositoryImpl implements LocationRepository {
     }
 
     try {
-      final location = await Geolocator.getCurrentPosition();
-      return location.toDomain();
+      final position = await Geolocator.getCurrentPosition();
+      final loc = position.toDomain();
+      _lastLoc = loc;
+      return loc;
     } catch (e) {
       throw Exception("getCurrentLocation : $e");
     }
@@ -47,7 +50,23 @@ class LocationRepositoryImpl implements LocationRepository {
       throw Exception("watchLocation : Permissions non accordées");
     }
     final stream = Geolocator.getPositionStream();
-    yield* stream
+    final cached = _lastLoc;
+    if (cached != null) {
+      yield cached;
+    } else {
+      final last = await Geolocator.getLastKnownPosition();
+      if (last != null) {
+        final loc = last.toDomain();
+        _lastLoc = loc;
+        yield loc;
+      }
+    }
+    yield* stream.asBroadcastStream(  onListen: (sub) {
+print("on a un listener");
+  },
+  onCancel: (sub) {
+    print("on en a perdu un");
+  },)
         .distinct((a, b) {
           final d = Geolocator.distanceBetween(
             a.latitude,
@@ -57,7 +76,10 @@ class LocationRepositoryImpl implements LocationRepository {
           );
           return d < bruit; // mètres
         })
-        .map((position) => position.toDomain());
+        .map((position) {
+          _lastLoc = position.toDomain();
+          return position.toDomain();
+        });
   }
 
   @override

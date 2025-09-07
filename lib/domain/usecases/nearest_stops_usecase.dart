@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:appli_r/domain/entities/location/position.dart';
-import 'package:appli_r/domain/entities/publicTransport/arret.dart';
+
 import 'package:appli_r/domain/entities/publicTransport/nearest.dart';
 import 'package:appli_r/domain/entities/publicTransport/reseau.dart';
 import 'package:appli_r/domain/repositories/location_repository.dart';
@@ -31,8 +31,10 @@ class WatchNearestStopsUseCase {
 
     final location$ = _locationRepository.watchLocation(30);
     StreamSubscription<Location>? locSub;
+    StreamSubscription<Reseau>? prefReseauSub;
 
     Location? lastLoc;
+    Set<Reseau>? lastReseaux;
 
     Future<void> emitIfReady(Location loc) async {
       if (lastLoc == null) return;

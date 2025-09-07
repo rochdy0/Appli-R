@@ -1,9 +1,8 @@
 import 'package:appli_r/presentation/ui/pages/carte/carte_page.dart';
-import 'package:appli_r/presentation/ui/pages/carte/widgets/carte.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
-import 'pages/mestitres/mes_titres_page.dart';
+import 'pages/parametres/parametre_page.dart';
 
 class NavigationBarre extends StatefulWidget {
   const NavigationBarre({super.key});
@@ -56,7 +55,7 @@ class _NavigationBarreState extends State<NavigationBarre> {
             showNav = boolean;
           })
         ),
-        MesTitresPage(),
+        ParametrePage(),
       ][currentPageIndex],
     );
   }

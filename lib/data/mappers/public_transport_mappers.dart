@@ -11,14 +11,10 @@ extension AgenceMapper on AgencyData {
 }
 
 extension ReseauMapper on Reseau {
-  static Reseau fromData(String id, String agenceId) => Reseau(id: id, agenceId: agenceId, imageFileName: '$id.webp');
+  static Reseau fromData(String id) => Reseau(id: id, imageFileName: '$id.webp');
 }
 
 extension LigneMapper on Route {
-  static Ligne fromData(Route route, String agenceId) => Ligne(id: route.routeId, agenceId: agenceId, name: route.routeShortName, color: hexToColor(route.routeColor), textColor: hexToColor(route.routeTextColor));
-}
-
-extension LigneMapper2 on Route {
   Ligne toDomain() => Ligne(id: routeId, agenceId: agencyId, name: routeShortName, color: hexToColor(routeColor), textColor: hexToColor(routeTextColor));
 }
 

@@ -9,9 +9,8 @@ class ArretsTransport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.shrink();
-    /* final zoom = context.watch<MapController>().camera.zoom;
-    if (zoom > 19) {
+     final zoom = context.select((MapController mc) => mc.camera.zoom);
+/*     if (zoom > 19) {
       return MarkerLayer(
         markers: context
             .watch<PublicTransportViewModel>()
@@ -33,11 +32,10 @@ class ArretsTransport extends StatelessWidget {
             )
             .toList(),
       );
-    } else if (zoom > 15) {
+    } else  */if (zoom > 15) {
+      final arrets = context.select((PublicTransportViewModel vm) => vm.arrets);
       return MarkerLayer(
-        markers: context
-            .watch<PublicTransportViewModel>()
-            .arrets
+        markers: arrets
             .map(
               (arret) => Marker(
                 point: LatLng(arret.lat, arret.lon),
@@ -90,6 +88,6 @@ class ArretsTransport extends StatelessWidget {
       );
     } else {
       return SizedBox.shrink();
-    } */
+    }
   }
 }

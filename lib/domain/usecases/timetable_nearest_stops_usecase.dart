@@ -58,7 +58,7 @@ class NearestArretsAllLinesRealtimeUseCase {
         .watchArretsTimeTable(n.arret, n.ligne)
         .listen(
       (rt) {
-        if (!controller.isClosed) {
+        if (!controller.isClosed && rt.directions.isNotEmpty) {
           controller.add(TimetableUpdated(
             arret: n.arret,
             ligne: n.ligne,
@@ -90,7 +90,6 @@ class NearestArretsAllLinesRealtimeUseCase {
         .listen(
       (nearestList) async {
         if (!controller.isClosed) controller.add(NearestChanged(nearestList));
-
         final newKeys = nearestList.map(key).toSet();
         final oldKeys = subsByKey.keys.toSet();
 
