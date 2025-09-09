@@ -28,7 +28,6 @@ class VoiViewModel extends ChangeNotifier {
       _vehicules = data;
       notifyListeners();
     });
-
     _proximitySub = _watchNearestVehiclesUseCase.watch().listen((data) {
       _proximityVehicules = data;
       notifyListeners();

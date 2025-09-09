@@ -27,8 +27,8 @@ class CarteWidget extends StatefulWidget {
 }
 
 class _FlutterMapPmTilesPageState extends State<CarteWidget> {
-  LatLng _initialPosition = LatLng(45.17163437173795, 5.726154510512428);
-  double _initialZoom = 10;
+  LatLng _initialPosition = LatLng(45.15163437173795, 5.727154610532428);
+  double _initialZoom = 12;
   @override
   void initState() {
     super.initState();

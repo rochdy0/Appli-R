@@ -12,6 +12,7 @@ import 'package:appli_r/domain/entities/publicTransport/ligne_shape.dart';
 import 'package:appli_r/domain/entities/publicTransport/nearest.dart';
 import 'package:appli_r/domain/entities/publicTransport/reseau.dart';
 import 'package:appli_r/domain/repositories/public_transport_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PublicTransportRepositoryImpl implements PublicTransportRepository {
   final TestDatabase _db;
@@ -49,9 +50,7 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
     try {
       final results = await _db.getLignesByReseau(reseau.id);
 
-      return results
-          .map((r) => r.toDomain())
-          .toSet();
+      return results.map((r) => r.toDomain()).toSet();
     } catch (e, stack) {
       print("Erreur dans loadLignesByReseau: $e");
       print(stack);
@@ -59,13 +58,12 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
     }
   }
 
-    @override
+  @override
   Future<Set<Ligne>> loadLignesByReseaux(Set<String> reseauIds) async {
     try {
       final results = await _db.getLignesByReseaux(reseauIds);
 
-      return Set.unmodifiable(results
-          .map((r) => r.toDomain()));
+      return Set.unmodifiable(results.map((r) => r.toDomain()));
     } catch (e, stack) {
       print("Erreur dans loadLignesByReseau: $e");
       print(stack);
@@ -96,14 +94,12 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
     }
   }
 
-    @override
+  @override
   Future<Set<Arret>> loadArretsByReseau(Reseau reseau) async {
     try {
       final results = await _db.getArretsByReseau(reseau.id);
 
-      return results
-          .map((r) => r.toDomain())
-          .toSet();
+      return results.map((r) => r.toDomain()).toSet();
     } catch (e, stack) {
       print("Erreur dans loadArretsByReseau: $e");
       print(stack);
@@ -164,42 +160,21 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
 
   @override
   Stream<RealTimeResponseModel> watchArretsTimeTable(Arret arret, Ligne ligne) {
-    final controller = StreamController<RealTimeResponseModel>.broadcast();
-    Timer? timer;
-    RealTimeResponseModel? last;
-
-    Future<void> tick() async {
-      try {
-        final data = await _publicTransportApi.fetchPublicTransportTimeTable(
-          arret.code,
-          ligne.agenceId,
-          ligne.name,
-        );
-        if (last == null || !(last! == data)) {
-          last = data;
-          if (!controller.isClosed) controller.add(data);
-        }
-      } catch (e, st) {
-        if (!controller.isClosed) controller.addError(e, st);
-      }
-    }
-
-    controller.onListen = () {
-      // tick immédiat
-      tick();
-      // puis périodique
-      timer = Timer.periodic(const Duration(seconds: 30), (_) => tick());
-    };
-
-    controller.onCancel = () {
-      // Pour un stream broadcast, on arrête tout quand il n’y a VRAIMENT plus d’abonnés
-      if (!controller.hasListener) {
-        timer?.cancel();
-        timer = null;
-        controller.close();
-      }
-    };
-
-    return controller.stream;
+    return Stream<void>.periodic(const Duration(seconds: 30))
+        .startWith(null)
+        .exhaustMap(
+          (_) =>
+              Stream.fromFuture(
+                _publicTransportApi.fetchPublicTransportTimeTable(
+                  arret.code,
+                  ligne.agenceId,
+                  ligne.name,
+                ),
+              ).onErrorResume(
+                (_, _) => const Stream<RealTimeResponseModel>.empty(),
+              ),
+        )
+        .distinct((a, b) => a == b)
+        .shareReplay(maxSize: 1);
   }
 }

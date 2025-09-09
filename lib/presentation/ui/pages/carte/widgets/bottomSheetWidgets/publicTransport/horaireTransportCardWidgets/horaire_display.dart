@@ -41,8 +41,8 @@ class HorairesDisplay extends StatelessWidget {
         String twoDigits(int n) => n.toString().padLeft(2, '0');
         final format = switch (diff.inMinutes) {
           >= 60 => "${twoDigits(target.hour)}:${twoDigits(target.minute)}",
+          0 => "<1",
           < 60 => diff.inMinutes.toString(),
-          < 1 => "< 1",
           _ => "Erreur",
         };
         return Padding(

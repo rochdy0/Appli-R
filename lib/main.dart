@@ -69,7 +69,7 @@ void main() async {
         ),
         Provider(
           create: (context) =>
-              WatchNearestStopsUseCase(context.read(), context.read()),
+              WatchNearestStopsUseCase(context.read(), context.read(), context.read()),
         ),
                 Provider(
           create: (context) =>

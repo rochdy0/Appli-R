@@ -5,12 +5,12 @@ import 'package:appli_r/domain/entities/voi_vehicule.dart';
 import 'package:appli_r/domain/entities/location/position.dart';
 import 'package:appli_r/domain/repositories/location_repository.dart';
 import 'package:appli_r/domain/repositories/bikes_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class WatchNearestVehiclesUseCase {
   final BikesRepository _bikesRepository;
   final LocationRepository _locationRepository;
 
-  /// Nombre de véhicules à renvoyer (0 = pas de limite)
   final int defaultLimit;
 
   WatchNearestVehiclesUseCase(
@@ -19,65 +19,18 @@ class WatchNearestVehiclesUseCase {
     this.defaultLimit = 5,
   });
 
-  /// Combine les deux streams :
-  /// - à chaque nouvelle position OU nouvelle liste de véhicules,
-  ///   on renvoie une liste triée par distance croissante.
-  ///
-  /// `bikesPeriod` est passé tel quel au repo (si implémente un polling).
-  Stream<List<VoiVehicule>> watch({int? limit, Duration? bikesPeriod}) {
-    final effectiveLimit = limit ?? defaultLimit;
-
-    final location$ = _locationRepository.watchLocation(5);
-    final bikes$ = _bikesRepository.watchVoiVehicules(
-      period: bikesPeriod ?? const Duration(seconds: 30),
+  Stream<List<VoiVehicule>> watch() {
+    return Rx.combineLatest2(
+      _locationRepository.watchLocation(5),
+      _bikesRepository.watchVoiVehicules(),
+      (loc, bikes) =>
+          (bikes.toList()..sort(
+                (a, b) =>
+                    _distanceMeters(loc, a).compareTo(_distanceMeters(loc, b)),
+              ))
+              .take(defaultLimit)
+              .toList(),
     );
-
-    late final StreamController<List<VoiVehicule>> controller;
-    StreamSubscription<Location>? locSub;
-    StreamSubscription<Set<VoiVehicule>>? bikesSub;
-
-    Location? _lastLoc;
-    Set<VoiVehicule>? _lastBikes;
-
-    void emitIfReady() {
-      if (_lastLoc == null || _lastBikes == null) return;
-
-      final loc = _lastLoc!;
-      final sorted = _lastBikes!.toList()
-        ..sort((a, b) {
-          final da = _distanceMeters(loc, a);
-          final db = _distanceMeters(loc, b);
-          return da.compareTo(db);
-        });
-
-      final out = (effectiveLimit != 0)
-          ? sorted.take(effectiveLimit).toList()
-          : sorted;
-
-      if (!controller.isClosed) {
-        controller.add(out);
-      }
-    }
-
-    controller = StreamController<List<VoiVehicule>>.broadcast(
-      onListen: () {
-        locSub = location$.listen((loc) {
-          _lastLoc = loc;
-          emitIfReady();
-        }, onError: controller.addError);
-
-        bikesSub = bikes$.listen((bikes) {
-          _lastBikes = bikes;
-          emitIfReady();
-        }, onError: controller.addError);
-      },
-      onCancel: () async {
-        await locSub?.cancel();
-        await bikesSub?.cancel();
-      },
-    );
-
-    return controller.stream;
   }
 
   /// Haversine rapide (approx. m)

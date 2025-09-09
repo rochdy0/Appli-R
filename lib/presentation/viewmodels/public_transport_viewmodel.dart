@@ -51,6 +51,7 @@ class PublicTransportViewModel extends ChangeNotifier {
     this.nearestRealtimeUseCase,
     this.preferencesRepository,
   ) {
+    _restartRealtimeIfActive();
     repository.loadAgences().then((value) {
       _agences.addAll(value);
       notifyListeners();
@@ -119,13 +120,9 @@ class PublicTransportViewModel extends ChangeNotifier {
       // Rien à écouter si aucun réseau n’est sélectionné
       return;
     }
-    final _distanceMeters = 500;
 
     _rtSub = nearestRealtimeUseCase
-        .watchNearestArretsAllLinesRealtime(
-          reseaux: _selectedReseaux,
-          distanceMeters: _distanceMeters,
-        )
+        .watchNearestArretsAllLinesRealtime()
         .listen((evt) {
           if (evt is NearestChanged) {
             _nearest = evt.nearest;

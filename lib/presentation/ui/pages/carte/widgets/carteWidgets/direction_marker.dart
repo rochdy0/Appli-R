@@ -10,6 +10,7 @@ class DirectionMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return const SizedBox();
     final pos = context.select((LocationViewModel l) => l.location);
     final dir = context.select((LocationViewModel l) => l.heading);
 

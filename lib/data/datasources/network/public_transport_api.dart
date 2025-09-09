@@ -27,7 +27,7 @@ class PublicTransportApi {
 
     final data = json.decode(response.body) as List<dynamic>;
     final List<Pattern> patterns = [];
-    final List<Horaire> horaires = [];
+    List<Horaire> horaires = [];
     try {
     for (final d in data) {
       patterns.add(Pattern.fromJson(d['pattern']));
@@ -35,6 +35,7 @@ class PublicTransportApi {
         horaires.add(Horaire.fromJson(d['pattern']['id'],  h));
       }
     }
+    horaires = horaires.take(3).toList();
     }
   catch (e, stack) {
       print("Erreur dans loadArretsAProximiteByReseaux: $e");

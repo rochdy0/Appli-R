@@ -5,9 +5,9 @@ import 'package:appli_r/domain/enums/location/permission_status.dart';
 import 'package:appli_r/domain/repositories/location_repository.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rxdart/rxdart.dart';
 
 class LocationRepositoryImpl implements LocationRepository {
-  Location? _lastLoc;
   @override
   Future<LocationPermissionStatus> ensurePermission() async {
     final enabled = await Geolocator.isLocationServiceEnabled();
@@ -35,66 +35,63 @@ class LocationRepositoryImpl implements LocationRepository {
 
     try {
       final position = await Geolocator.getCurrentPosition();
-      final loc = position.toDomain();
-      _lastLoc = loc;
-      return loc;
+      return position.toDomain();
     } catch (e) {
       throw Exception("getCurrentLocation : $e");
     }
   }
 
   @override
-  Stream<Location> watchLocation(int bruit) async* {
-    final status = await ensurePermission();
-    if (status != LocationPermissionStatus.granted) {
-      throw Exception("watchLocation : Permissions non accordées");
-    }
-    final stream = Geolocator.getPositionStream();
-    final cached = _lastLoc;
-    if (cached != null) {
-      yield cached;
-    } else {
-      final last = await Geolocator.getLastKnownPosition();
-      if (last != null) {
-        final loc = last.toDomain();
-        _lastLoc = loc;
-        yield loc;
-      }
-    }
-    yield* stream.asBroadcastStream(  onListen: (sub) {
-print("on a un listener");
-  },
-  onCancel: (sub) {
-    print("on en a perdu un");
-  },)
-        .distinct((a, b) {
-          final d = Geolocator.distanceBetween(
-            a.latitude,
-            a.longitude,
-            b.latitude,
-            b.longitude,
-          );
-          return d < bruit; // mètres
-        })
-        .map((position) {
-          _lastLoc = position.toDomain();
-          return position.toDomain();
-        });
+  Stream<Location> watchLocation(int bruit) {
+    return Rx.fromCallable(ensurePermission)
+        .flatMap<Location>(
+          (status) => status != LocationPermissionStatus.granted
+              ? Stream.error(
+                  Exception("watchLocation : Permissions non accordées"),
+                )
+              : Rx.concat<Location>([
+                  Stream.fromFuture(
+                    Geolocator.getCurrentPosition().then(
+                      (value) => value.toDomain(),
+                    ),
+                  ),
+                  Geolocator.getPositionStream()
+                      .map((p) => p.toDomain())
+                      .distinct(
+                        (a, b) =>
+                            Geolocator.distanceBetween(
+                              a.latitude,
+                              a.longitude,
+                              b.latitude,
+                              b.longitude,
+                            ) <
+                            bruit, // mètres
+                      ),
+                ]),
+        )
+        .shareReplay(maxSize: 1);
   }
 
   @override
-  Stream<double> watchHeading() async* {
-    final status = await ensurePermission();
-    if (status != LocationPermissionStatus.granted) {
-      throw Exception("watchHeading : Permissions non accordées");
-    }
-    final compassStream = FlutterCompass.events;
-    if (compassStream == null) {
-      throw Exception("watchHeading : CompassStream null");
-    }
-    yield* compassStream
-        .where((e) => e.heading != null)
-        .map((e) => e.heading!)
-        .distinct((a, b) => (a - b).abs() < 1); // ~1° de tolérance
+  Stream<double> watchHeading() {
+    return Rx.fromCallable(ensurePermission).flatMap<double>((status) {
+      if (status != LocationPermissionStatus.granted) {
+        return Stream.error(
+          Exception("watchHeading : Permissions non accordées"),
+        );
+      }
+
+      final events = FlutterCompass.events;
+      if (events == null) {
+        return Stream.error(Exception("watchHeading : CompassStream null"));
+      }
+
+      return events
+          .map((e) => e.heading)
+          .where((h) => h != null)
+          .map((h) => h!)
+          .where((h) => !h.isNaN)
+          .distinct((a, b) => (a - b).abs() < 1);
+    });
   }
 }

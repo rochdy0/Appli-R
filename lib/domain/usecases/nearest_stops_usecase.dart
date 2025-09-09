@@ -1,83 +1,38 @@
 import 'dart:async';
 
-import 'package:appli_r/domain/entities/location/position.dart';
-
 import 'package:appli_r/domain/entities/publicTransport/nearest.dart';
-import 'package:appli_r/domain/entities/publicTransport/reseau.dart';
 import 'package:appli_r/domain/repositories/location_repository.dart';
+import 'package:appli_r/domain/repositories/preferences_repository.dart';
 import 'package:appli_r/domain/repositories/public_transport_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class WatchNearestStopsUseCase {
   final LocationRepository _locationRepository;
   final PublicTransportRepository _publicTransportRepository;
+  final PreferencesRepository _preferencesRepository;
 
-  /// Nombre d’arrêts à renvoyer (0 = pas de limite)
-  final int defaultLimit;
+  final int limit;
+  final int distanceMeters;
 
   WatchNearestStopsUseCase(
     this._locationRepository,
-    this._publicTransportRepository, {
-    this.defaultLimit = 10,
+    this._publicTransportRepository,
+    this._preferencesRepository, {
+    this.limit = 10,
+    this.distanceMeters = 600,
   });
 
-  Stream<List<Nearest>> watch({
-    required Set<Reseau> reseaux,
-    required int distanceMeters,
-    int? limit,
-  }) {
-    final effectiveLimit = limit ?? defaultLimit;
-
-    late final StreamController<List<Nearest>> controller;
-
-    final location$ = _locationRepository.watchLocation(30);
-    StreamSubscription<Location>? locSub;
-    StreamSubscription<Reseau>? prefReseauSub;
-
-    Location? lastLoc;
-    Set<Reseau>? lastReseaux;
-
-    Future<void> emitIfReady(Location loc) async {
-      if (lastLoc == null) return;
-
-      try {
-        final arrets = await _publicTransportRepository
-            .loadArretsAProximiteByReseaux(
-              loc.latitude,
-              loc.longitude,
-              reseaux,
-              distanceMeters,
-            );
-
-        final out = (effectiveLimit != 0)
-            ? arrets.take(effectiveLimit).toList()
-            : arrets;
-
-        if (!controller.isClosed) {
-          controller.add(out);
-        }
-      } catch (e, st) {
-        if (!controller.isClosed) controller.addError(e, st);
-      }
-    }
-
-    controller = StreamController<List<Nearest>>.broadcast(
-      onListen: () {
-        locSub = location$.listen(
-          (loc) {
-            lastLoc = loc;
-            // ignore: unawaited_futures
-            emitIfReady(loc);
-          },
-          onError: (e, st) {
-            if (!controller.isClosed) controller.addError(e, st);
-          },
-        );
-      },
-      onCancel: () async {
-        await locSub?.cancel();
-      },
-    );
-
-    return controller.stream;
-  }
+  Stream<List<Nearest>> watch() =>
+      Rx.combineLatest2(
+        _locationRepository.watchLocation(30),
+        _preferencesRepository.watchReseauPreferences(),
+        (loc, pref) => (loc, pref),
+      ).asyncMap(
+        (tuple) => _publicTransportRepository.loadArretsAProximiteByReseaux(
+          tuple.$1.latitude,
+          tuple.$1.longitude,
+          tuple.$2,
+          distanceMeters,
+        ),
+      );
 }
