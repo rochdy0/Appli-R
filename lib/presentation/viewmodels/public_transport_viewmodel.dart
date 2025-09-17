@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:appli_r/data/models/public_transport_timetable_arret.dart';
 import 'package:appli_r/domain/entities/publicTransport/agence.dart';
@@ -20,22 +19,19 @@ class PublicTransportViewModel extends ChangeNotifier {
   final PreferencesRepository preferencesRepository;
 
   final Set<Agence> _agences = {};
-  final Set<Agence> _selectedAgence = {};
+  Agence? _selectedAgence;
 
-  UnmodifiableSetView<Agence> get agences => UnmodifiableSetView(_agences);
-  UnmodifiableSetView<Agence> get selectedAgence =>
-      UnmodifiableSetView(_selectedAgence);
+  Set<Agence> get agences => Set.unmodifiable(_agences);
+  Agence? get selectedAgence => _selectedAgence;
 
   Set<Reseau> _reseaux = {};
   Set<Reseau> _selectedReseaux = {};
+  StreamSubscription<Set<Reseau>>? _prefReseauxSub;
 
-  UnmodifiableSetView<Reseau> get reseaux => UnmodifiableSetView(_reseaux);
-  UnmodifiableSetView<Reseau> get selectedReseaux =>
-      UnmodifiableSetView(_selectedReseaux);
+  Set<Reseau> get reseaux => Set.unmodifiable(_reseaux);
+  Set<Reseau> get selectedReseaux =>
+      Set.unmodifiable(_selectedReseaux);
 
-  final Set<Arret> _arrets = {};
-
-  UnmodifiableSetView<Arret> get arrets => UnmodifiableSetView(_arrets);
 
   StreamSubscription<NearRealtimeEvent>? _rtSub;
   List<Nearest> _nearest = const [];
@@ -51,11 +47,18 @@ class PublicTransportViewModel extends ChangeNotifier {
     this.nearestRealtimeUseCase,
     this.preferencesRepository,
   ) {
-    _restartRealtimeIfActive();
+    startRealtime();
     repository.loadAgences().then((value) {
       _agences.addAll(value);
       notifyListeners();
     });
+
+        _prefReseauxSub = preferencesRepository.watchNetworkPreferences().listen(
+      (evt) {
+          _selectedReseaux = evt;
+      },
+      onError: (e, st) {},
+    );
   }
 
   void selectAgence(Agence agence) async {
@@ -64,26 +67,21 @@ class PublicTransportViewModel extends ChangeNotifier {
       return;
     }
 
-    final action = _selectedAgence.contains(agence)
+    final action = _selectedAgence == agence
         ? SelectionAction.remove
         : SelectionAction.add;
-
-    _reseaux = await repository.loadReseauxByAgence(agence);
-    final prefReseaux = preferencesRepository.getSelectedReseaux();
-    prefReseaux.fold((sucess) {
-      _selectedReseaux = _reseaux.intersection(sucess);
-    }, (fail) {
-
-    });
-    
-
     if (action == SelectionAction.remove) {
-      _selectedAgence.remove(agence);
+      _selectedAgence = null;
+      _reseaux.clear();
     } else {
-      _selectedAgence.add(agence);
+      _selectedAgence = agence;
+      _reseaux = await repository.loadReseauxByAgence(agence);
+/*       final prefReseaux = preferencesRepository.getSelectedReseaux();
+      prefReseaux.fold((sucess) {
+        _selectedReseaux = _reseaux.intersection(sucess);
+        
+      }, (fail) {}); */
     }
-    
-
     notifyListeners();
   }
 
@@ -92,47 +90,51 @@ class PublicTransportViewModel extends ChangeNotifier {
       debugPrint("Reseau sélectionnée inexistante ${reseau.id}!");
       return;
     }
-
-    final result = _selectedReseaux.contains(reseau)
-        ? await preferencesRepository.removeSelectedReseau(reseau.id)
-        : await preferencesRepository.addSelectedReseau(reseau.id);
-      result.fold((success) {
-        _selectedReseaux = success;
-      }, (error) {});
-    _restartRealtimeIfActive();
-
-    /*     repository.loadLignesByReseau(reseau).then((lignes) {
-      _loadLignes(lignes, action);
-      repository
-          .loadLigneShapesByLignes(lignes)
-          .then((shapes) => _loadLignesShapes(shapes, action));
-    }); */
-
-    /* final arretsFromReseau = await repository.loadArretsByReseau(reseau); */
-    /* _loadArrets(arretsFromReseau, action);  */
+    final action = _selectedReseaux.contains(reseau)
+        ? SelectionAction.remove
+        : SelectionAction.add;
+    if (action == SelectionAction.remove) {
+      _selectedReseaux.remove(reseau);
+    } else {
+      _selectedReseaux.add(reseau);
+    }
 
     notifyListeners();
+    final result = action == SelectionAction.remove
+        ? await preferencesRepository.removeNetworkPreferences(reseau.id)
+        : await preferencesRepository.addNetworkPreferences(reseau.id);
+    result.fold(
+      (success) {
+        // OK, rien à faire, l'état local est déjà correct
+      },
+      (error) {
+        // rollback
+        if (action == SelectionAction.remove) {
+          _selectedReseaux.add(reseau);
+        } else {
+          _selectedReseaux.remove(reseau);
+        }
+        notifyListeners();
+      },
+    );
   }
 
   void startRealtime() {
     if (_rtSub != null) return; // déjà démarré
-    if (_selectedReseaux.isEmpty) {
-      // Rien à écouter si aucun réseau n’est sélectionné
-      return;
-    }
 
-    _rtSub = nearestRealtimeUseCase
-        .watchNearestArretsAllLinesRealtime()
-        .listen((evt) {
-          if (evt is NearestChanged) {
-            _nearest = evt.nearest;
+    _rtSub = nearestRealtimeUseCase.watchNearestArretsAllLinesRealtime().listen(
+      (evt) {
+        if (evt is NearestChanged) {
+          _nearest = evt.nearest;
 
-            notifyListeners();
-          } else if (evt is TimetableUpdated) {
-            _rtByPair[_pairKey(evt.arret, evt.ligne)] = evt.realtime;
-            notifyListeners();
-          }
-        }, onError: (e, st) {});
+          notifyListeners();
+        } else if (evt is TimetableUpdated) {
+          _rtByPair[_pairKey(evt.arret, evt.ligne)] = evt.realtime;
+          notifyListeners();
+        }
+      },
+      onError: (e, st) {},
+    );
   }
 
   Future<void> stopRealtime() async {
@@ -140,15 +142,10 @@ class PublicTransportViewModel extends ChangeNotifier {
     _rtSub = null;
   }
 
-  void _restartRealtimeIfActive() {
-    /*     final wasActive = _rtSub != null; */
-    /*     if (!wasActive) return; */
-    stopRealtime().then((_) => startRealtime());
-  }
-
   @override
   void dispose() {
     _rtSub?.cancel();
+    _prefReseauxSub?.cancel();
     super.dispose();
   }
 

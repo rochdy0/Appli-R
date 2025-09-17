@@ -2,7 +2,6 @@ import 'package:appli_r/utils/map_camera_move.dart';
 import 'package:appli_r/presentation/viewmodels/voi_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
@@ -25,11 +24,12 @@ class _VoiVehiculesMarkerState extends State<VoiVehiculesMarker>
 
   @override
   Widget build(BuildContext context) {
-    final markers = context.watch<VoiViewModel>().vehicules.map((vehicule) {
+    final vehicules = context.select((VoiViewModel vm) => vm.vehicules);
+    return MarkerLayer(markers: vehicules.map((vehicule) {
       final targetColor =
-          context.watch<VoiViewModel>().selectedVehicule == vehicule
+          context.select((VoiViewModel vm) => vm.selectedVehicule == vehicule
           ? const Color.fromARGB(255, 243, 105, 97)
-          : Colors.white;
+          : Colors.white);
       return Marker(
         point: LatLng(vehicule.lat, vehicule.lon),
         width: 40,
@@ -75,8 +75,7 @@ class _VoiVehiculesMarkerState extends State<VoiVehiculesMarker>
           ),
         ),
       );
-    }).toList();
-    return MarkerLayer(markers: markers);
+    }).toList());
     /*     return MarkerClusterLayerWidget(
       options: MarkerClusterLayerOptions(
         maxClusterRadius: 100,

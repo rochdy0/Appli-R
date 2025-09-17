@@ -10,13 +10,17 @@ class Agence {
   });
 
   @override
+  String toString() {
+    return "Agence $id du nom $nom avec image $imageFileName";
+  }
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Agence &&
           id == other.id &&
           nom == other.nom &&
           imageFileName == other.imageFileName;
-
           
   @override
   int get hashCode =>

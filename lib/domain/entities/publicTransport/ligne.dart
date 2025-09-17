@@ -4,6 +4,7 @@ class Ligne {
   final String id;
   final String agenceId;
   final String name;
+  final String imageFileName;
   final Color color;
   final Color textColor;
 
@@ -11,6 +12,7 @@ class Ligne {
     required this.id,
     required this.agenceId,
     required this.name,
+    required this.imageFileName,
     required this.color,
     required this.textColor,
   });

@@ -11,7 +11,7 @@ class VoiVehiculeDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final VoiVehicule? vehicule = context.watch<VoiViewModel>().selectedVehicule;
+    final VoiVehicule? vehicule = context.select((VoiViewModel vm) => vm.selectedVehicule);
     if (vehicule == null) {
       return SizedBox.shrink();
     }

@@ -16,6 +16,7 @@ class VoiApi {
   Future<Set<VoiVehiculeModel>> fetchVehicle() async {
     final url = Uri.parse(
       'https://api.voiapp.io/gbfs/fr/6bb6b5dc-1cda-4da7-9216-d3023a0bc54a/v2/358/free_bike_status.json',
+      /* 'https://data.mobilites-m.fr/api/gbfs/voi_grenoble/free_bike_status' */
     );
 
     final response = await client.get(url);

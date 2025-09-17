@@ -1,104 +1,113 @@
 import 'dart:async';
 
-import 'package:appli_r/data/datasources/local/preferences/shared_preferences.dart';
+import 'package:appli_r/data/datasources/local/preferences/shared_preferences_reseaux.dart';
 import 'package:appli_r/data/mappers/public_transport_mappers.dart';
 import 'package:appli_r/domain/entities/publicTransport/reseau.dart';
 import 'package:appli_r/domain/repositories/preferences_repository.dart';
 import 'package:result_dart/result_dart.dart';
+import 'package:rxdart/subjects.dart';
+
+enum RepositoryAction { add, remove }
 
 class PreferencesRepositoryImpl implements PreferencesRepository {
   final SharedPreferencesService _preferencesService;
 
-  Set<Reseau>? _last;
-
-  final _controllerReseau = StreamController<Set<Reseau>>.broadcast();
+  final _reseauxSubject = BehaviorSubject<Set<Reseau>>();
+  final _stopsSubject = BehaviorSubject<Set<String>>();
 
   PreferencesRepositoryImpl(this._preferencesService) {
-    _loadInitial();
+    _reseauxSubject.add(
+      _preferencesService
+          .get(PrefType.selectedReseau)
+          .map((s) => ReseauMapper.fromData(s))
+          .toSet(),
+    );
+    _stopsSubject.add(_preferencesService.get(PrefType.favouriteStop));
   }
 
-  void _loadInitial() {
-    final result = _preferencesService.getSelectedReseaux();
-    result.fold(
-      (set) {
-        _last = set.map((s) => ReseauMapper.fromData(s)).toSet();
+  Future<Result<Set<Reseau>>> _updateReseauPreferences(
+    RepositoryAction action,
+    String value,
+  ) async {
+    final futureResult = switch (action) {
+      RepositoryAction.add => _preferencesService.add(
+        PrefType.selectedReseau,
+        value,
+      ),
+      RepositoryAction.remove => _preferencesService.remove(
+        PrefType.selectedReseau,
+        value,
+      ),
+    };
+
+    final serviceResult = await futureResult;
+    return serviceResult.fold(
+      (updated) {
+        final mappedSet = updated.map(ReseauMapper.fromData).toSet();
+        _reseauxSubject.add(mappedSet);
+        return Success(mappedSet);
       },
-      (err) {
-        _controllerReseau.addError(err);
+      (failure) {
+        _reseauxSubject.addError(failure);
+        return Failure(failure);
       },
     );
   }
 
-  @override
-  Future<Result<Set<Reseau>>> addSelectedReseau(String reseauId) async {
-    final serviceResult = await _preferencesService.addSelectedReseau(reseauId);
+  Future<Result<Set<String>>> _updateStopPreferences(
+    RepositoryAction action,
+    String ligneId,
+    String poteauId,
+  ) async {
+    final value = "$ligneId|$poteauId";
+    final futureResult = switch (action) {
+      RepositoryAction.add => _preferencesService.add(
+        PrefType.favouriteStop,
+        value,
+      ),
+      RepositoryAction.remove => _preferencesService.remove(
+        PrefType.favouriteStop,
+        value,
+      ),
+    };
 
+    final serviceResult = await futureResult;
     return serviceResult.fold(
       (updated) {
-        final updatedReseaux = updated
-            .map((s) => ReseauMapper.fromData(s))
-            .toSet();
-        _last = updatedReseaux;
-        _controllerReseau.add(Set.unmodifiable(updatedReseaux));
-        return Success(updatedReseaux);
+        _stopsSubject.add(updated);
+        return Success(updated);
       },
       (failure) {
-        _controllerReseau.addError(failure);
+        _stopsSubject.addError(failure);
         return Failure(failure);
       },
     );
   }
 
   @override
-  Future<Result<Set<Reseau>>> removeSelectedReseau(String reseauId) async {
-    final serviceResult = await _preferencesService.removeSelectedReseau(
-      reseauId,
-    );
-
-    return serviceResult.fold(
-      (updated) {
-        final updatedReseaux = updated
-            .map((s) => ReseauMapper.fromData(s))
-            .toSet();
-        _last = updatedReseaux;
-        _controllerReseau.add(Set.unmodifiable(updatedReseaux));
-        return Success(updatedReseaux);
-      },
-      (failure) {
-        _controllerReseau.addError(failure);
-        return Failure(failure);
-      },
-    );
-  }
+  Future<Result<Set<Reseau>>> addNetworkPreferences(String reseauId) =>
+      _updateReseauPreferences(RepositoryAction.add, reseauId);
 
   @override
-  Result<Set<Reseau>> getSelectedReseaux() {
-    final serviceResult = _preferencesService.getSelectedReseaux();
-    return serviceResult.fold(
-      (updated) {
-        final updatedReseaux = updated
-            .map((s) => ReseauMapper.fromData(s))
-            .toSet();
-        _last = updatedReseaux;
-        _controllerReseau.add(Set.unmodifiable(updatedReseaux));
-        return Success(updatedReseaux);
-      },
-      (failure) {
-        _controllerReseau.addError(failure);
-        return Failure(failure);
-      },
-    );
-  }
+  Future<Result<Set<Reseau>>> removeNetworkPreferences(String reseauId) =>
+      _updateReseauPreferences(RepositoryAction.remove, reseauId);
 
   @override
-  Stream<Set<Reseau>> watchReseauPreferences() async* {
-    if (_last != null) {
-      yield Set.unmodifiable(_last!);
-    }
-    yield* _controllerReseau.stream;
-  }
+  Stream<Set<Reseau>> watchNetworkPreferences() => _reseauxSubject.stream;
+
+  @override
+  Future<Result<void>> addStopsPreferences(String ligneId, String poteauId) =>
+      _updateStopPreferences(RepositoryAction.add, ligneId, poteauId);
+
+  @override
+  Future<Result<void>> removeStopsPreferences(String ligneId, String poteauId) =>
+      _updateStopPreferences(RepositoryAction.remove, ligneId, poteauId);
+
+  @override
+  Stream<Set<String>> watchStopsPreferences() => _stopsSubject.stream;
 
   void dispose() {
-    _controllerReseau.close();
+    _reseauxSubject.close();
+    _stopsSubject.close();
   }
 }

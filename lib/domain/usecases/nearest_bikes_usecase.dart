@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:appli_r/domain/entities/nearest_voi_vehicule.dart';
 import 'package:appli_r/domain/entities/voi_vehicule.dart';
 import 'package:appli_r/domain/entities/location/position.dart';
 import 'package:appli_r/domain/repositories/location_repository.dart';
@@ -19,7 +20,7 @@ class WatchNearestVehiclesUseCase {
     this.defaultLimit = 5,
   });
 
-  Stream<List<VoiVehicule>> watch() {
+  Stream<List<NearestVoiVehicule>> watch() {
     return Rx.combineLatest2(
       _locationRepository.watchLocation(5),
       _bikesRepository.watchVoiVehicules(),
@@ -29,6 +30,7 @@ class WatchNearestVehiclesUseCase {
                     _distanceMeters(loc, a).compareTo(_distanceMeters(loc, b)),
               ))
               .take(defaultLimit)
+              .map((b) => NearestVoiVehicule.fromVoiVehicule(b, distance: _distanceMeters(loc, b)))
               .toList(),
     );
   }

@@ -72,6 +72,8 @@ class Pattern {
   }
 }
 
+
+
 class Horaire {
   final String tripId;
   final String patternId;
@@ -85,10 +87,12 @@ class Horaire {
   });
 
     factory Horaire.fromJson(dynamic patternId, Map<String, dynamic> json) {
+    int time = json['realtimeArrival'] as int;
+    if (time > 86400) {time-=86400;}
     return Horaire(
       patternId: patternId as String,
       tripId: json['tripId'] as String,
-      realtimeArrival: json['realtimeArrival'] as int,
+      realtimeArrival: time,
       isRealTime: json['realtime'] as bool,
     );
   }

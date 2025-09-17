@@ -12,7 +12,7 @@ class PublicTransportApi {
     String agenceId,
     String ligneId
   ) async {
-    final url = Uri.parse(
+     final url = Uri.parse(
       'https://data.mobilites-m.fr/api/routers/default/index/clusters/$agenceId:$arretCode/stoptimes?route=$agenceId:$ligneId',
     );
 
@@ -23,19 +23,24 @@ class PublicTransportApi {
 
     if (response.statusCode != 200) {
       throw Exception('Erreur API Data Mobilite M : ${response.statusCode}');
-    }
+    } 
 
-    final data = json.decode(response.body) as List<dynamic>;
-    final List<Pattern> patterns = [];
-    List<Horaire> horaires = [];
+     final data = json.decode(response.body) as List<dynamic>; 
+     final List<Pattern> patterns = [];
+     List<Horaire> horaires = [];
+/*     final List<Pattern> patterns = [Pattern(id: "Test123", lastStopName: "LastStop")];
+    List<Horaire> horaires = [Horaire(tripId: "SEM3847932", patternId: "test123", realtimeArrival: 10800, isRealTime: true)]; */
     try {
-    for (final d in data) {
+     for (final d in data) {
       patterns.add(Pattern.fromJson(d['pattern']));
+      var i = 0;
       for (final h in d['times']) {
-        horaires.add(Horaire.fromJson(d['pattern']['id'],  h));
+        i++;
+         horaires.add(Horaire.fromJson(d['pattern']['id'],  h));
+         if (i>2) break;
       }
-    }
-    horaires = horaires.take(3).toList();
+    } 
+    horaires = horaires.toList();
     }
   catch (e, stack) {
       print("Erreur dans loadArretsAProximiteByReseaux: $e");

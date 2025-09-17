@@ -1,4 +1,4 @@
-import 'package:appli_r/presentation/viewmodels/public_transport_viewmodel.dart';
+import 'package:appli_r/presentation/viewmodels/publicTransport/public_transport_map_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -33,7 +33,10 @@ class ArretsTransport extends StatelessWidget {
             .toList(),
       );
     } else  */if (zoom > 15) {
-      final arrets = context.select((PublicTransportViewModel vm) => vm.arrets);
+      final arrets = context.select((PublicTransportMapViewmodel vm) => vm.arrets);
+          if (arrets == null) {
+      return const SizedBox(); // ou n'affiche rien temporairement
+    }
       return MarkerLayer(
         markers: arrets
             .map(

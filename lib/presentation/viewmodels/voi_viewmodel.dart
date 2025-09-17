@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:appli_r/domain/entities/nearest_voi_vehicule.dart';
 import 'package:appli_r/domain/entities/voi_vehicule.dart';
 import 'package:appli_r/domain/repositories/bikes_repository.dart';
 import 'package:appli_r/domain/usecases/nearest_bikes_usecase.dart';
@@ -12,7 +13,7 @@ class VoiViewModel extends ChangeNotifier {
   final WatchNearestVehiclesUseCase _watchNearestVehiclesUseCase;
 
   Set<VoiVehicule> _vehicules = {};
-  List<VoiVehicule> _proximityVehicules = [];
+  List<NearestVoiVehicule> _proximityVehicules = [];
 
   StreamSubscription? _allSub;
   StreamSubscription? _proximitySub;
@@ -20,7 +21,7 @@ class VoiViewModel extends ChangeNotifier {
   VoiVehicule? _selectedVehicule;
 
   UnmodifiableSetView<VoiVehicule> get vehicules => UnmodifiableSetView(_vehicules);
-  UnmodifiableListView<VoiVehicule> get proximityVehicules => UnmodifiableListView(_proximityVehicules);
+  UnmodifiableListView<NearestVoiVehicule> get proximityVehicules => UnmodifiableListView(_proximityVehicules);
   VoiVehicule? get selectedVehicule => _selectedVehicule;
 
   VoiViewModel(this.repository, this._watchNearestVehiclesUseCase) {

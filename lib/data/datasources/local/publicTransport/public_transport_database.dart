@@ -46,14 +46,15 @@ class TestDatabase extends _$TestDatabase {
   Future<List<Route>> getLignesByReseaux(Set<String> reseauIds) =>
       (select(routes)..where((r) => r.networkId.isIn(reseauIds))).get();
 
-  Future<List<Shape>> getLigneShapeByLigne(String ligneId) async {
+  Future<List<Shape>> getLigneShapeByLigne(String ligneId, String agenceId) async {
     final row =
         await (selectOnly(shapes, distinct: true)
               ..addColumns([shapes.shapeId])
-              ..where(shapes.shapeId.like('%\\_$ligneId\\_%', escapeChar: '\\'))
+              ..where(shapes.shapeId.like('$agenceId\\_$ligneId\\_%', escapeChar: '\\'))
               ..orderBy([OrderingTerm.desc(shapes.shapeId)])
               ..limit(1))
             .getSingleOrNull();
+      // C'est pour obtenir le dernier tracé parce que yen a beaucoup jsp pk
 
     final shapeId = row?.read(shapes.shapeId);
 
@@ -71,32 +72,16 @@ class TestDatabase extends _$TestDatabase {
         .get();
   }
 
-  Future<List<Stop>> getArretsByAgences(List<String> agencesId) {
-    if (agencesId.isEmpty) return Future.value(const []);
-
-    final q = (selectOnly(stops, distinct: true)
-      ..addColumns(stops.$columns) // inclure toutes les colonnes des stops
-      ..join([
-        innerJoin(stopTimes, stopTimes.stopId.equalsExp(stops.stopId)),
-        innerJoin(trips, trips.tripId.equalsExp(stopTimes.tripId)),
-        innerJoin(routes, routes.routeId.equalsExp(trips.routeId)),
-      ])
-      ..where(routes.agencyId.isIn(agencesId)));
-
-    return q.map((row) => row.readTable(stops)).get();
-  }
-
-  Future<List<Stop>> getArretsByReseau(String reseauId) {
+  Future<List<Stop>> getArretsByReseaux(Set<String> reseauxIds) {
     final base = select(stops, distinct: true)
-      ..where((t) => routes.networkId.equals(reseauId)); // <- fonction attendue
-
-    final q = base.join([
-      innerJoin(stopTimes, stopTimes.stopId.equalsExp(stops.stopId)),
-      innerJoin(trips, trips.tripId.equalsExp(stopTimes.tripId)),
-      innerJoin(routes, routes.routeId.equalsExp(trips.routeId)),
+    .join([
+      innerJoin(routeStop, routeStop.stopId.equalsExp(stops.stopId)),
+      innerJoin(routes, routes.routeId.equalsExp(routeStop.routeId)),
     ]);
+      base.where(routes.networkId.isIn(reseauxIds));
+      base.where(stops.parentStation.isNull());
 
-    return q.map((row) => row.readTable(stops)).get();
+    return base.map((row) => row.readTable(stops)).get();
   }
 
   Future<List<Stop>> getArretsByCoord(
@@ -139,6 +124,6 @@ LazyDatabase _openConnection() {
       copyAssetToFile('test2.sqlite', FilePersistence.persistent);
       file = File(dbPath);
     }
-    return NativeDatabase(file);
+    return NativeDatabase.createInBackground(file);
   });
 }

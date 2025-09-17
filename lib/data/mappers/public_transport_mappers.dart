@@ -15,7 +15,7 @@ extension ReseauMapper on Reseau {
 }
 
 extension LigneMapper on Route {
-  Ligne toDomain() => Ligne(id: routeId, agenceId: agencyId, name: routeShortName, color: hexToColor(routeColor), textColor: hexToColor(routeTextColor));
+  Ligne toDomain() => Ligne(id: routeId, agenceId: agencyId, name: routeShortName, imageFileName: '$routeShortName.webp', color: hexToColor(routeColor), textColor: hexToColor(routeTextColor));
 }
 
 extension LigneShapeMapper on Shape {

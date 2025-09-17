@@ -1,7 +1,6 @@
 import 'package:appli_r/domain/entities/publicTransport/nearest.dart';
 import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/publicTransport/horaireTransportCardWidgets/horaire_display.dart';
 import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/publicTransport/horaireTransportCardWidgets/transport_ligne_info.dart';
-import 'package:appli_r/utils/real_time_transport.dart';
 import 'package:appli_r/presentation/viewmodels/public_transport_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,9 +38,30 @@ class HoraireTransportCard extends StatelessWidget {
                             arret: transport.arret,
                             direction: pattern[index],
                           ),
-                          HorairesDisplay(
-                            patternId: pattern[index].id,
-                            transport: transport,
+                          Column(
+                            spacing: 0,
+                            children: [
+/*                               SizedBox(
+                                height: 25, // Hauteur souhaitée
+                                child: IconButton(
+                                  iconSize: 20,
+                                  style: ButtonStyle(
+                                    overlayColor: WidgetStateProperty.all(
+                                      Colors.transparent,
+                                    ),
+                                    splashFactory: NoSplash.splashFactory,
+                                  ),
+                                  icon: Icon(Icons.favorite_border),
+                                  onPressed: () {
+
+                                  },
+                                ),
+                              ), */
+                              HorairesDisplay(
+                                patternId: pattern[index].id,
+                                transport: transport,
+                              ),
+                            ],
                           ),
                         ],
                       ),

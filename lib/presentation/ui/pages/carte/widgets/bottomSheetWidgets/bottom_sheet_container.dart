@@ -1,9 +1,7 @@
-import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/bike/voi_proximity_vehicules.dart';
-import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/bike/voi_vehicule_detail.dart';
-import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/publicTransport/horaire_transport_card.dart';
-import 'package:appli_r/presentation/viewmodels/public_transport_viewmodel.dart';
+import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/bike_container.dart';
+import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/bottom_sheet_title.dart';
+import 'package:appli_r/presentation/ui/pages/carte/widgets/bottomSheetWidgets/public_transport_container.dart';
 import 'package:appli_r/presentation/viewmodels/transport_mode_viewmodel.dart';
-import 'package:appli_r/presentation/viewmodels/voi_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +11,7 @@ class BottomSheetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mode = context.select((TransportModeViewModel t) => t.selectedMode);
     return CustomScrollView(
       controller: scrollController,
       slivers: [
@@ -50,10 +49,7 @@ class BottomSheetContainer extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   // 👉 Texte ou autre
-                  const Text(
-                    "test à proximité",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  BottomSheetTitle()
 
                   // Tu peux aussi mettre des boutons, menus, etc.
                 ],
@@ -63,18 +59,12 @@ class BottomSheetContainer extends StatelessWidget {
         ),
         SliverList.list(
           children: [
-            ...switch (context.watch<TransportModeViewModel>().selectedMode) {
+            ...switch (mode) {
               TransportMode.publicTransport => [
-                  ...context
-                    .select((PublicTransportViewModel p) => p.nearest)
-                    .map(
-                      (transport) => HoraireTransportCard(transport: transport),
-                    ),
+                  PublicTransportContainer()
               ],
               TransportMode.bike => [
-                context.watch<VoiViewModel>().selectedVehicule != null
-                    ? VoiVehiculeDetail()
-                    : VoiProximityVehicules(),
+                BikeContainer()
               ],
               TransportMode.car => [],
             },

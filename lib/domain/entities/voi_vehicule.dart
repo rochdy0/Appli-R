@@ -11,7 +11,7 @@ class VoiVehicule {
   final VoiTypeVehicule type;
   final double kmRestant;
 
-  const VoiVehicule({
+  VoiVehicule({
     required this.id,
     required this.deepLink,
     required this.lat,

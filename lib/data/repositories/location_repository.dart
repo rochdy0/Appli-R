@@ -51,9 +51,12 @@ class LocationRepositoryImpl implements LocationRepository {
                 )
               : Rx.concat<Location>([
                   Stream.fromFuture(
-                    Geolocator.getCurrentPosition().then(
-                      (value) => value.toDomain(),
-                    ),
+                    Geolocator.getLastKnownPosition().then((value) {
+                      if (value != null) {
+                        return value.toDomain();
+                      }
+                      return Future.error("No first location");
+                    })
                   ),
                   Geolocator.getPositionStream()
                       .map((p) => p.toDomain())

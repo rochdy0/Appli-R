@@ -76,7 +76,7 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
     try {
       final Set<LigneShape> shapes = {};
       for (final ligne in lignes) {
-        final results = await _db.getLigneShapeByLigne(ligne.name);
+        final results = await _db.getLigneShapeByLigne(ligne.name, ligne.agenceId);
         final shape = LigneShapeMapper.fromData(
           ligne.name,
           ligne.color,
@@ -95,9 +95,9 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
   }
 
   @override
-  Future<Set<Arret>> loadArretsByReseau(Reseau reseau) async {
+  Future<Set<Arret>> loadArretsByReseaux(Set<String> reseauxIds) async {
     try {
-      final results = await _db.getArretsByReseau(reseau.id);
+      final results = await _db.getArretsByReseaux(reseauxIds);
 
       return results.map((r) => r.toDomain()).toSet();
     } catch (e, stack) {

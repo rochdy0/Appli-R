@@ -1,4 +1,4 @@
-import 'package:appli_r/presentation/ui/pages/carte/widgets/topBarWidgets/TransportModeWidgets/transport_configuration_modal.dart';
+import 'package:appli_r/presentation/ui/pages/carte/widgets/topBarWidgets/TransportConfigurationModal/transport_configuration_modal.dart';
 import 'package:appli_r/presentation/viewmodels/transport_mode_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -38,7 +38,7 @@ class TransportConfigurationButton extends StatelessWidget {
           },
         );
       },
-      child: Icon(iconMap[context.watch<TransportModeViewModel>().selectedMode]),
+      child: Icon(iconMap[context.select((TransportModeViewModel t) => t.selectedMode)]),
     );
   }
 }

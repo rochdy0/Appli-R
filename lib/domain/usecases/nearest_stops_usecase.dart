@@ -25,7 +25,7 @@ class WatchNearestStopsUseCase {
   Stream<List<Nearest>> watch() =>
       Rx.combineLatest2(
         _locationRepository.watchLocation(30),
-        _preferencesRepository.watchReseauPreferences(),
+        _preferencesRepository.watchNetworkPreferences(),
         (loc, pref) => (loc, pref),
       ).asyncMap(
         (tuple) => _publicTransportRepository.loadArretsAProximiteByReseaux(

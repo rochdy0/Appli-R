@@ -14,9 +14,9 @@ import 'package:appli_r/presentation/viewmodels/voi_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
-import 'package:vector_map_tiles/vector_map_tiles.dart';
+/* import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:vector_map_tiles_pmtiles/vector_map_tiles_pmtiles.dart';
-import 'package:vector_tile_renderer/vector_tile_renderer.dart';
+import 'package:vector_tile_renderer/vector_tile_renderer.dart'; */
 import 'package:latlong2/latlong.dart';
 
 class CarteWidget extends StatefulWidget {
@@ -40,10 +40,9 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
       context,
       listen: false,
     );
-    final pos = locationViewModel.location;
-    if (pos != null) {
+    if (!locationViewModel.loading && locationViewModel.error == null) {
       setState(() {
-        _initialPosition = LatLng(pos.latitude, pos.longitude);
+        _initialPosition = LatLng(locationViewModel.location!.latitude, locationViewModel.location!.longitude);
         _initialZoom = 16;
       });
     }
@@ -51,12 +50,13 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<PmTilesVectorTileProvider>(
+    final selectedMode = context.select((TransportModeViewModel t) => t.selectedMode);
+/*     return FutureBuilder<PmTilesVectorTileProvider>(
       future: loadTileProvider(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final tileProvider = snapshot.data!;
-
+ */
           return FlutterMap(
             mapController: context.read<MapController>(),
             options: MapOptions(
@@ -74,25 +74,26 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
                 pinchMoveThreshold: 20.0,
                 flags:
                     InteractiveFlag.pinchZoom |
+                    InteractiveFlag.doubleTapZoom |
                     InteractiveFlag.drag |
-                    InteractiveFlag.pinchMove,
+                    InteractiveFlag.pinchMove |
+                    InteractiveFlag.flingAnimation,
               ),
               onTap: (_, _) {
                 context.read<VoiViewModel>().clearSelection();
               },
             ),
             children: [
-              /*       TileLayer( // Bring your own tiles
-        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // For demonstration only
+                     TileLayer( // Bring your own tiles
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoicm9jaGR5MCIsImEiOiJjbWZuNHl6azcwOXZ0Mm1zYXRneTNiNG51In0.8e9Yg-Fh-FGkrWTFKr0Z1g', // For demonstration only
         userAgentPackageName: 'com.example.app', // Add your app identifier
         // And many more recommended properties!
-      ), */
-              VectorTileLayer(
+      ), 
+/*               VectorTileLayer(
                 theme: ThemeReader().read(lightStyle),
                 tileProviders: TileProviders({'openmaptiles': tileProvider}),
-              ),
-
-              ...switch (context.watch<TransportModeViewModel>().selectedMode) {
+              ), */
+              ...switch (selectedMode) {
                 TransportMode.publicTransport => [
                   LignesTransportPolyline(),
                   ArretsTransport(),
@@ -103,16 +104,16 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
                 TransportMode.car => [],
               },
 
-              if (!context.watch<LocationViewModel>().loading) ...[
-                //GpsCircleLayer(),
-                /* GpsPulseMarker(), */
+              if (!context.select((LocationViewModel l) => l.loading)) ...[
+                GpsCircleLayer(),
+                GpsPulseMarker(), 
                 GpsMarkerLayer(),
 
                 DirectionMarker(),
               ],
             ],
           );
-        }
+/*         }
         if (snapshot.hasError) {
           debugPrint(snapshot.error.toString());
           debugPrintStack(stackTrace: snapshot.stackTrace);
@@ -120,7 +121,7 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
         }
         return const Center(child: CircularProgressIndicator());
       },
-    );
+    ); */
   }
 }
 

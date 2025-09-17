@@ -1,4 +1,4 @@
-import 'package:appli_r/data/datasources/local/preferences/shared_preferences.dart';
+import 'package:appli_r/data/datasources/local/preferences/shared_preferences_reseaux.dart';
 import 'package:appli_r/data/datasources/local/publicTransport/public_transport_database.dart';
 import 'package:appli_r/data/datasources/network/public_transport_api.dart';
 import 'package:appli_r/data/repositories/bikes_repository.dart';
@@ -13,6 +13,7 @@ import 'package:appli_r/domain/repositories/public_transport_repository.dart';
 import 'package:appli_r/domain/usecases/lines_from_favourite_networks.dart';
 import 'package:appli_r/domain/usecases/nearest_bikes_usecase.dart';
 import 'package:appli_r/domain/usecases/nearest_stops_usecase.dart';
+import 'package:appli_r/domain/usecases/stops_from_favourite_networks.dart';
 import 'package:appli_r/domain/usecases/timetable_nearest_stops_usecase.dart';
 import 'package:appli_r/presentation/viewmodels/bike_mode_viewmodel.dart';
 import 'package:appli_r/presentation/viewmodels/car_mode_viewmodel.dart';
@@ -43,44 +44,54 @@ void main() async {
         Provider(create: (_) => PublicTransportApi()),
         Provider(create: (_) => LocationRepositoryImpl() as LocationRepository),
 
-
-
         // Repositories
         Provider(
           create: (context) =>
               BikesRepositoryImpl(context.read()) as BikesRepository,
         ),
-                Provider(
+        Provider(
           create: (context) =>
-              PreferencesRepositoryImpl(context.read()) as PreferencesRepository),
-        
+              PreferencesRepositoryImpl(context.read())
+                  as PreferencesRepository,
+        ),
         Provider(
           create: (context) =>
               PublicTransportRepositoryImpl(database, context.read())
                   as PublicTransportRepository,
         ),
-                Provider(
+
+        //Use Cases
+        Provider(
           create: (context) =>
               WatchNearestVehiclesUseCase(context.read(), context.read()),
         ),
-                        Provider(
+        Provider(
           create: (context) =>
               WatchLinesFromFavouriteNetworks(context.read(), context.read()),
         ),
-        Provider(
-          create: (context) =>
-              WatchNearestStopsUseCase(context.read(), context.read(), context.read()),
-        ),
                 Provider(
           create: (context) =>
-              NearestArretsAllLinesRealtimeUseCase(context.read(), context.read()),
+              WatchStopsFromFavouriteNetworks(context.read(), context.read()),
         ),
         Provider(
-          create: (context) =>
-              NearestArretsAllLinesRealtimeUseCase(context.read(), context.read()),
+          create: (context) => WatchNearestStopsUseCase(
+            context.read(),
+            context.read(),
+            context.read(),
+          ),
         ),
-
-
+        Provider(
+          create: (context) => NearestArretsAllLinesRealtimeUseCase(
+            context.read(),
+            context.read(),
+          ),
+        ),
+        Provider(
+          create: (context) => NearestArretsAllLinesRealtimeUseCase(
+            context.read(),
+            context.read(),
+          ),
+        ),
 
         // ViewModels
         ChangeNotifierProvider(
@@ -91,12 +102,17 @@ void main() async {
           create: (context) => VoiViewModel(context.read(), context.read()),
         ),
 
-                ChangeNotifierProvider(
-          create: (context) => PublicTransportMapViewmodel(context.read(), context.read()),
+        ChangeNotifierProvider(
+          create: (context) =>
+              PublicTransportMapViewmodel(context.read(), context.read(), context.read()),
         ),
 
         ChangeNotifierProvider(
-          create: (context) => PublicTransportViewModel(context.read(), context.read(), context.read())
+          create: (context) => PublicTransportViewModel(
+            context.read(),
+            context.read(),
+            context.read(),
+          ),
         ),
 
         ChangeNotifierProvider(create: (context) => BikeModeViewModel()),

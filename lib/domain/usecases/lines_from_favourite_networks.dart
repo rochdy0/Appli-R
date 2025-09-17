@@ -14,7 +14,7 @@ class WatchLinesFromFavouriteNetworks {
   );
 
   Stream<Set<Ligne>> watch() =>
-      _preferencesRepository.watchReseauPreferences()
+      _preferencesRepository.watchNetworkPreferences()
       .map((data) => data.map((e) => e.id).toSet())
       .distinct((a, b) => a.containsAll(b) && b.containsAll(a))
       .asyncMap(
