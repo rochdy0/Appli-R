@@ -2,32 +2,27 @@ import 'dart:async';
 import 'package:appli_r/domain/entities/publicTransport/arret.dart';
 import 'package:appli_r/domain/entities/publicTransport/ligne.dart';
 import 'package:appli_r/domain/entities/publicTransport/ligne_shape.dart';
-import 'package:appli_r/domain/repositories/public_transport_repository.dart';
-import 'package:appli_r/domain/usecases/lines_from_favourite_networks.dart';
+import 'package:appli_r/domain/usecases/lines_shapes_from_favourite_networks.dart';
 import 'package:appli_r/domain/usecases/stops_from_favourite_networks.dart';
 import 'package:flutter/foundation.dart';
 
 class PublicTransportMapViewmodel with ChangeNotifier {
-  final PublicTransportRepository _publicTransportRepository;
-  final WatchLinesFromFavouriteNetworks _linesFromFavouriteNetworks;
   final WatchStopsFromFavouriteNetworks _stopsFromFavouriteNetworks;
+  final WatchLinesShapesFromFavouriteNetworks _linesShapesFromFavouriteNetworks;
   PublicTransportMapViewmodel(
-    this._publicTransportRepository,
-    this._linesFromFavouriteNetworks,
     this._stopsFromFavouriteNetworks,
+    this._linesShapesFromFavouriteNetworks,
   ) {
     start();
   }
 
-  StreamSubscription<Set<Ligne>>? _lineFavSub;
+  StreamSubscription<Set<LigneShape>>? _lineShapeFavSub;
   StreamSubscription<Set<Arret>>? _stopFavSub;
 
   String? _error;
   bool _loading = false;
-  Set<Ligne>? _lignes;
   Set<LigneShape>? _lignesShapes;
   Set<Arret>? _arrets;
-  Set<Ligne>? get lignes => _lignes;
   Set<LigneShape>? get lignesShapes => _lignesShapes;
   Set<Arret>? get arrets => _arrets;
   String? get error => _error;
@@ -38,12 +33,10 @@ class PublicTransportMapViewmodel with ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    _lineFavSub?.cancel();
-    _lineFavSub = _linesFromFavouriteNetworks.watch().listen(
-      (lines) async {
-        _lignes = lines;
-        _lignesShapes = await _publicTransportRepository
-            .loadLigneShapesByLignes(lines);
+    _lineShapeFavSub?.cancel();
+    _lineShapeFavSub = _linesShapesFromFavouriteNetworks.watch().listen(
+      (shapes) {
+        _lignesShapes = shapes;
         notifyListeners();
       },
       onError: (e) {
@@ -51,8 +44,7 @@ class PublicTransportMapViewmodel with ChangeNotifier {
         notifyListeners();
       },
     );
-
-     _stopFavSub?.cancel();
+    _stopFavSub?.cancel();
     _stopFavSub = _stopsFromFavouriteNetworks.watch().listen(
       (stops) {
         _arrets = stops;
@@ -69,9 +61,9 @@ class PublicTransportMapViewmodel with ChangeNotifier {
   }
 
   Future<void> stop() async {
-    await _lineFavSub?.cancel();
+    await _lineShapeFavSub?.cancel();
     await _stopFavSub?.cancel();
-    _lineFavSub = null;
+    _lineShapeFavSub = null;
     _stopFavSub = null;
   }
 

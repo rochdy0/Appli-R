@@ -105,8 +105,8 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
               },
 
               if (!context.select((LocationViewModel l) => l.loading)) ...[
-                GpsCircleLayer(),
-                GpsPulseMarker(), 
+                 GpsCircleLayer(), 
+                 GpsPulseMarker(),  
                 GpsMarkerLayer(),
 
                 DirectionMarker(),

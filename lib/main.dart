@@ -11,6 +11,7 @@ import 'package:appli_r/domain/repositories/location_repository.dart';
 import 'package:appli_r/domain/repositories/preferences_repository.dart';
 import 'package:appli_r/domain/repositories/public_transport_repository.dart';
 import 'package:appli_r/domain/usecases/lines_from_favourite_networks.dart';
+import 'package:appli_r/domain/usecases/lines_shapes_from_favourite_networks.dart';
 import 'package:appli_r/domain/usecases/nearest_bikes_usecase.dart';
 import 'package:appli_r/domain/usecases/nearest_stops_usecase.dart';
 import 'package:appli_r/domain/usecases/stops_from_favourite_networks.dart';
@@ -71,6 +72,12 @@ void main() async {
         ),
                 Provider(
           create: (context) =>
+              WatchLinesShapesFromFavouriteNetworks(context.read(), context.read()),
+        ),
+
+        
+                Provider(
+          create: (context) =>
               WatchStopsFromFavouriteNetworks(context.read(), context.read()),
         ),
         Provider(
@@ -104,7 +111,7 @@ void main() async {
 
         ChangeNotifierProvider(
           create: (context) =>
-              PublicTransportMapViewmodel(context.read(), context.read(), context.read()),
+              PublicTransportMapViewmodel(context.read(), context.read()),
         ),
 
         ChangeNotifierProvider(

@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 class LigneShape {
   final String id;
+  final String name;
   final Color color;
   final List<LigneShapeSequence> sequence;
 
-  LigneShape({required this.id, required this.color, required this.sequence});
+  LigneShape({required this.id, required this.name, required this.color, required this.sequence});
 
   @override
   String toString() {
-    return "LigneShape $id";
+    return "LigneShape $name";
   }
 
   @override

@@ -78,6 +78,7 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
       for (final ligne in lignes) {
         final results = await _db.getLigneShapeByLigne(ligne.name, ligne.agenceId);
         final shape = LigneShapeMapper.fromData(
+          ligne.id,
           ligne.name,
           ligne.color,
           results,
@@ -86,6 +87,7 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
       }
       if (shapes.isEmpty)
         throw Exception("fetchLigneShapesByLigne retourne une liste vide");
+        print("finiiii");
       return shapes;
     } catch (e, stack) {
       print("Erreur dans loadLigneShapesByLigne: $e");

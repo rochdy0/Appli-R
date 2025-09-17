@@ -19,7 +19,7 @@ extension LigneMapper on Route {
 }
 
 extension LigneShapeMapper on Shape {
-  static LigneShape fromData(String ligneId, Color color, List<Shape> shapes) => LigneShape(id: ligneId, color: color, sequence: shapes.map((shape) => LigneShapeSequence(id: shape.shapePtSequence, lat: shape.shapePtLat, lon: shape.shapePtLon)).toList());
+  static LigneShape fromData(String ligneId, String ligneName, Color color, List<Shape> shapes) => LigneShape(id: ligneId, name: ligneName, color: color, sequence: shapes.map((shape) => LigneShapeSequence(id: shape.shapePtSequence, lat: shape.shapePtLat, lon: shape.shapePtLon)).toList());
 }
 
 extension ArretMapper on Stop {
