@@ -46,40 +46,43 @@ class TestDatabase extends _$TestDatabase {
   Future<List<Route>> getLignesByReseaux(Set<String> reseauIds) =>
       (select(routes)..where((r) => r.networkId.isIn(reseauIds))).get();
 
-  Future<List<Shape>> getLigneShapeByLigne(String ligneId, String agenceId) async {
-    final row =
-        await (selectOnly(shapes, distinct: true)
-              ..addColumns([shapes.shapeId])
-              ..where(shapes.shapeId.like('$agenceId\\_$ligneId\\_%', escapeChar: '\\'))
-              ..orderBy([OrderingTerm.desc(shapes.shapeId)])
-              ..limit(1))
-            .getSingleOrNull();
-      // C'est pour obtenir le dernier tracé parce que yen a beaucoup jsp pk
+  Future<List<Shape>> getLinesShapesByLines(Set<String> prefixes) async {
+    final placeholders = List.filled(prefixes.length, '?').join(',');
+    final query =
+        '''
+    WITH prefixes AS (
+      SELECT rtrim(rtrim(shape_id, '0123456789'), '_') AS prefix,
+             shape_id
+      FROM shapes
+    ),
+    latest AS (
+      SELECT prefix, MAX(shape_id) AS last_shape_id
+      FROM prefixes
+      WHERE prefix IN ($placeholders)
+      GROUP BY prefix
+    )
+    SELECT s.*
+    FROM shapes s
+    JOIN latest l ON s.shape_id = l.last_shape_id
+    ORDER BY s.shape_id, s.shape_pt_sequence;
+  ''';
 
-    final shapeId = row?.read(shapes.shapeId);
+    final rows = await customSelect(
+      query,
+      variables: prefixes.map((p) => Variable<String>(p)).toList(),
+      readsFrom: {shapes},
+    ).get();
 
-    if (shapeId == null) return [];
-
-    return (select(shapes)
-          ..where((s) => s.shapeId.equals(shapeId))
-          ..orderBy([
-            (s) => OrderingTerm(expression: s.shapeId, mode: OrderingMode.asc),
-            (s) => OrderingTerm(
-              expression: s.shapePtSequence,
-              mode: OrderingMode.asc,
-            ),
-          ]))
-        .get();
+    return rows.map((row) => shapes.map(row.data)).toList();
   }
 
   Future<List<Stop>> getArretsByReseaux(Set<String> reseauxIds) {
-    final base = select(stops, distinct: true)
-    .join([
+    final base = select(stops, distinct: true).join([
       innerJoin(routeStop, routeStop.stopId.equalsExp(stops.stopId)),
       innerJoin(routes, routes.routeId.equalsExp(routeStop.routeId)),
     ]);
-      base.where(routes.networkId.isIn(reseauxIds));
-      base.where(stops.parentStation.isNull());
+    base.where(routes.networkId.isIn(reseauxIds));
+    base.where(stops.parentStation.isNull());
 
     return base.map((row) => row.readTable(stops)).get();
   }

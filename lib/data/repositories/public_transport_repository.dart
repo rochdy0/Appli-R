@@ -74,21 +74,21 @@ class PublicTransportRepositoryImpl implements PublicTransportRepository {
   @override
   Future<Set<LigneShape>> loadLigneShapesByLignes(Set<Ligne> lignes) async {
     try {
-      final Set<LigneShape> shapes = {};
-      for (final ligne in lignes) {
-        final results = await _db.getLigneShapeByLigne(ligne.name, ligne.agenceId);
-        final shape = LigneShapeMapper.fromData(
-          ligne.id,
-          ligne.name,
-          ligne.color,
-          results,
-        );
-        shapes.add(shape);
-      }
-      if (shapes.isEmpty)
-        throw Exception("fetchLigneShapesByLigne retourne une liste vide");
-        print("finiiii");
-      return shapes;
+      final prefs = lignes.map((l) => "${l.agenceId}_${l.name}").toSet();
+      final test = await _db.getLinesShapesByLines(prefs);
+
+      return lignes
+          .map(
+            (l) => LigneShapeMapper.fromData(
+              l.id,
+              l.name,
+              l.color,
+              test
+                  .where((s) => s.shapeId.contains('${l.agenceId}_${l.name}_'))
+                  .toList(),
+            ),
+          )
+          .toSet();
     } catch (e, stack) {
       print("Erreur dans loadLigneShapesByLigne: $e");
       print(stack);
