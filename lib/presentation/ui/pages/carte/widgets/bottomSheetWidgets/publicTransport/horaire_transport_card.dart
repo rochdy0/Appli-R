@@ -19,57 +19,31 @@ class HoraireTransportCard extends StatelessWidget {
           return test?.directions;
         });
         if (pattern == null) return const SizedBox();
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 90,
-                child: PageView.builder(
-                  itemCount: pattern.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TransportLigneInfo(
-                            ligne: transport.ligne,
-                            arret: transport.arret,
-                            direction: pattern[index],
-                          ),
-                          Column(
-                            spacing: 0,
-                            children: [
-/*                               SizedBox(
-                                height: 25, // Hauteur souhaitée
-                                child: IconButton(
-                                  iconSize: 20,
-                                  style: ButtonStyle(
-                                    overlayColor: WidgetStateProperty.all(
-                                      Colors.transparent,
-                                    ),
-                                    splashFactory: NoSplash.splashFactory,
-                                  ),
-                                  icon: Icon(Icons.favorite_border),
-                                  onPressed: () {
-
-                                  },
-                                ),
-                              ), */
-                              HorairesDisplay(
-                                patternId: pattern[index].id,
-                                transport: transport,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 91,
+            child: PageView.builder(
+              itemCount: pattern.length,
+              itemBuilder: (context, index) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TransportLigneInfo(
+                      ligne: transport.ligne,
+                      arret: transport.arret,
+                      direction: pattern[index],
+                    ),
+                    HorairesDisplay(
+                      patternId: pattern[index].id,
+                      transport: transport,
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         );
       },

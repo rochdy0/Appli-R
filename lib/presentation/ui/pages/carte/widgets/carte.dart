@@ -85,7 +85,7 @@ class _FlutterMapPmTilesPageState extends State<CarteWidget> {
             ),
             children: [
                      TileLayer( // Bring your own tiles
-        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoicm9jaGR5MCIsImEiOiJjbWZuNHl6azcwOXZ0Mm1zYXRneTNiNG51In0.8e9Yg-Fh-FGkrWTFKr0Z1g', // For demonstration only
+        urlTemplate: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=', // Plus d'access token
         userAgentPackageName: 'com.example.app', // Add your app identifier
         // And many more recommended properties!
       ), 

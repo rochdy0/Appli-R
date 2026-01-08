@@ -21,8 +21,8 @@ class BottomSheetContainer extends StatelessWidget {
           primary: false,
           pinned: true,
           centerTitle: false,
-          collapsedHeight: 84, // ou 72/80 selon ton contenu
-          expandedHeight: 84,
+          /* collapsedHeight: 84, */ // ou 72/80 selon ton contenu
+          expandedHeight: 70,
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
               decoration: const BoxDecoration(

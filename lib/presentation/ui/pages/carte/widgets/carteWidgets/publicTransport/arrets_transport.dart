@@ -32,7 +32,7 @@ class ArretsTransport extends StatelessWidget {
             )
             .toList(),
       );
-    } else  */if (zoom > 15) {
+    } else  */if (zoom > 17) {
       final arrets = context.select((PublicTransportMapViewmodel vm) => vm.arrets);
           if (arrets == null) {
       return const SizedBox(); // ou n'affiche rien temporairement
